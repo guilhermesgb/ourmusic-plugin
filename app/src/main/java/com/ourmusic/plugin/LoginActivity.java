@@ -42,7 +42,8 @@ public class LoginActivity extends ActionBarActivity {
                     finish();
                 }
                 else {
-                    Log.e("MainActivity", "Login failed: bad result from Spotify");
+                    setResult(Activity.RESULT_CANCELED, intent);
+                    finish();
                 }
                 break;
             default:

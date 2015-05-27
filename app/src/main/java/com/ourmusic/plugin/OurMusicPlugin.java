@@ -27,23 +27,25 @@ public class OurMusicPlugin extends CordovaPlugin implements ConnectionStateCall
     protected static final String REDIRECT_URI = "ourmusic://spotify-callback/";
 
     private Player player;
+    private CallbackContext callback;
 
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callback)
           throws JSONException {
         if ( "login".equals(action) ){
-            loginToSpotify();
+            loginToSpotify(callback);
             return true;
         }
         return false;
     }
 
-    private void loginToSpotify() {
+    private void loginToSpotify(final CallbackContext callback) {
         cordova.getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                OurMusicPlugin.this.callback = callback;
                 Intent intent = new Intent(cordova.getActivity().getApplicationContext(), LoginActivity.class);
-                cordova.getActivity().startActivityForResult(intent, REQUEST_CODE_LOGIN_DELEGATE);
+                cordova.startActivityForResult(OurMusicPlugin.this, intent, REQUEST_CODE_LOGIN_DELEGATE);
             }
         });
     }
@@ -63,18 +65,29 @@ public class OurMusicPlugin extends CordovaPlugin implements ConnectionStateCall
                                 player.addConnectionStateCallback(OurMusicPlugin.this);
 /*                                player.addPlayerNotificationCallback(OurMusicPlugin.this);
                                 player.play("spotify:track:2TpxZ7JUBn3uw46aR7qd6V");*/
+                                String message = "Player initialized!";
+                                OurMusicPlugin.this.callback.success("OurMusicPlugin: " + message);
                             }
 
                             @Override
                             public void onError(Throwable throwable) {
-                                Log.e("MainActivity", "Could not initialize player: " + throwable.getMessage());
+                                String error = "Could not initialize player: " + throwable.getMessage();
+                                Log.e("OurMusicPlugin", error);
+                                OurMusicPlugin.this.callback.error("OurMusicPlugin: " + error);
                             }
                         });
                     }
                 }
                 else{
-                    Log.e("MainActivity", "Login failed: bad result from activity");
+                    String error = "Login failed: bad result from activity";
+                    Log.e("OurMusicPlugin", error);
+                    OurMusicPlugin.this.callback.error("OurMusicPlugin: " + error);
                 }
+                break;
+            case REQUEST_CODE_LOGIN_LAUNCH:
+                String error = "Login failed: bad result from Spotify";
+                Log.e("OurMusicPlugin", error);
+                OurMusicPlugin.this.callback.error("OurMusicPlugin: " + error);
                 break;
             default:
                 break;
@@ -83,26 +96,26 @@ public class OurMusicPlugin extends CordovaPlugin implements ConnectionStateCall
 
     @Override
     public void onLoggedIn() {
-        Log.d("MainActivity", "User logged in");
+        Log.d("OurMusicPlugin", "User logged in");
     }
 
     @Override
     public void onLoggedOut() {
-        Log.d("MainActivity", "User logged out");
+        Log.d("OurMusicPlugin", "User logged out");
     }
 
     @Override
     public void onLoginFailed(Throwable throwable) {
-        Log.d("MainActivity", "Login failed");
+        Log.d("OurMusicPlugin", "Login failed");
     }
 
     @Override
     public void onTemporaryError() {
-        Log.d("MainActivity", "Temporary error occurred");
+        Log.d("OurMusicPlugin", "Temporary error occurred");
     }
 
     @Override
     public void onConnectionMessage(String message) {
-        Log.d("MainActivity", "Received connection message: " + message);
+        Log.d("OurMusicPlugin", "Received connection message: " + message);
     }
 }
