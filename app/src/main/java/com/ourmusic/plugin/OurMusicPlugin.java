@@ -10,6 +10,8 @@ import com.spotify.sdk.android.authentication.AuthenticationResponse;
 import com.spotify.sdk.android.player.Config;
 import com.spotify.sdk.android.player.ConnectionStateCallback;
 import com.spotify.sdk.android.player.Player;
+import com.spotify.sdk.android.player.PlayerNotificationCallback;
+import com.spotify.sdk.android.player.PlayerState;
 import com.spotify.sdk.android.player.Spotify;
 
 import org.apache.cordova.api.CallbackContext;
@@ -19,7 +21,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 
-public class OurMusicPlugin extends CordovaPlugin implements ConnectionStateCallback {
+public class OurMusicPlugin extends CordovaPlugin
+      implements ConnectionStateCallback, PlayerNotificationCallback {
 
     protected static final int REQUEST_CODE_LOGIN_DELEGATE = 19204192;
     protected static final int REQUEST_CODE_LOGIN_LAUNCH = 20315203;
@@ -63,8 +66,8 @@ public class OurMusicPlugin extends CordovaPlugin implements ConnectionStateCall
                             @Override
                             public void onInitialized(Player player) {
                                 player.addConnectionStateCallback(OurMusicPlugin.this);
-/*                                player.addPlayerNotificationCallback(OurMusicPlugin.this);
-                                player.play("spotify:track:2TpxZ7JUBn3uw46aR7qd6V");*/
+                                player.addPlayerNotificationCallback(OurMusicPlugin.this);
+                                player.play("spotify:track:2TpxZ7JUBn3uw46aR7qd6V");
                                 String message = "Player initialized!";
                                 OurMusicPlugin.this.callback.success("OurMusicPlugin: " + message);
                             }
@@ -117,5 +120,15 @@ public class OurMusicPlugin extends CordovaPlugin implements ConnectionStateCall
     @Override
     public void onConnectionMessage(String message) {
         Log.d("OurMusicPlugin", "Received connection message: " + message);
+    }
+
+    @Override
+    public void onPlaybackEvent(EventType eventType, PlayerState playerState) {
+        Log.d("OurMusicPlugin", "Playback event received: " + eventType.name());
+    }
+
+    @Override
+    public void onPlaybackError(ErrorType errorType, String message) {
+        Log.d("MainActivity", "Playback error received: " + errorType.name());
     }
 }
