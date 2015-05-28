@@ -5,14 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.spotify.sdk.android.authentication.AuthenticationClient;
+/*import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
 import com.spotify.sdk.android.player.Config;
 import com.spotify.sdk.android.player.ConnectionStateCallback;
 import com.spotify.sdk.android.player.Player;
 import com.spotify.sdk.android.player.PlayerNotificationCallback;
 import com.spotify.sdk.android.player.PlayerState;
-import com.spotify.sdk.android.player.Spotify;
+import com.spotify.sdk.android.player.Spotify;*/
 
 import org.apache.cordova.api.CallbackContext;
 import org.apache.cordova.api.CordovaInterface;
@@ -22,14 +22,14 @@ import org.json.JSONException;
 
 
 public class OurMusicPlugin extends CordovaPlugin
-      implements ConnectionStateCallback, PlayerNotificationCallback {
+      /*implements ConnectionStateCallback, PlayerNotificationCallback*/ {
 
     protected static final int REQUEST_CODE_LOGIN_DELEGATE = 19204192;
     protected static final int REQUEST_CODE_LOGIN_LAUNCH = 20315203;
     protected static final String CLIENT_ID = "1ad1195a59f646e3a38b656332897055";
     protected static final String REDIRECT_URI = "ourmusic://spotify-callback/";
 
-    private Player player;
+//    private Player player;
     private CallbackContext callback;
 
     @Override
@@ -58,7 +58,7 @@ public class OurMusicPlugin extends CordovaPlugin
         switch (requestCode) {
             case REQUEST_CODE_LOGIN_DELEGATE:
                 if ( resultCode == Activity.RESULT_OK ) {
-                    AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
+/*                    AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
                     if ( response.getType() == AuthenticationResponse.Type.TOKEN ) {
                         Config playerConfig = new Config(cordova.getActivity().getApplicationContext(),
                                 response.getAccessToken(), CLIENT_ID);
@@ -67,10 +67,11 @@ public class OurMusicPlugin extends CordovaPlugin
                             public void onInitialized(Player player) {
                                 player.addConnectionStateCallback(OurMusicPlugin.this);
                                 player.addPlayerNotificationCallback(OurMusicPlugin.this);
-                                player.play("spotify:track:2TpxZ7JUBn3uw46aR7qd6V");
+                                player.play("spotify:track:2TpxZ7JUBn3uw46aR7qd6V");*/
                                 String message = "Player initialized!";
+                                Log.i("OurMusicPlugin", message);
                                 OurMusicPlugin.this.callback.success("OurMusicPlugin: " + message);
-                            }
+/*                            }
 
                             @Override
                             public void onError(Throwable throwable) {
@@ -79,7 +80,7 @@ public class OurMusicPlugin extends CordovaPlugin
                                 OurMusicPlugin.this.callback.error("OurMusicPlugin: " + error);
                             }
                         });
-                    }
+                    }*/
                 }
                 else{
                     String error = "Login failed: bad result from activity";
@@ -97,7 +98,7 @@ public class OurMusicPlugin extends CordovaPlugin
         }
     }
 
-    @Override
+/*    @Override
     public void onLoggedIn() {
         Log.d("OurMusicPlugin", "User logged in");
     }
@@ -130,5 +131,5 @@ public class OurMusicPlugin extends CordovaPlugin
     @Override
     public void onPlaybackError(ErrorType errorType, String message) {
         Log.d("MainActivity", "Playback error received: " + errorType.name());
-    }
+    }*/
 }
