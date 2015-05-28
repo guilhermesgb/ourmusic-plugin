@@ -1,9 +1,11 @@
-var __login__ = function(success, error) {
-    cordova.exec(function(message){
-           console.log(message);
-           success();
+module.exports = {
+    __login__ : function(success, error) {
+	cordova.exec(function(message){
+            console.log(message);
+            success();
         }, function(error){
-           console.log(error);
-           error();
-        }, "login", []);
+            console.log(error);
+            error();
+        },"OurMusicPlugin", "login", []);
+    }
 };
