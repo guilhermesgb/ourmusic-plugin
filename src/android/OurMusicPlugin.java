@@ -48,8 +48,8 @@ public class OurMusicPlugin extends CordovaPlugin
             @Override
             public void run() {
                 Context context = cordova.getActivity().getApplicationContext();
-                Toast toast = Toast.makeText(activity.getApplicationContext(),
-                        "OurMusicPlugin: Will prompt Login to Spotify!", Toast.LENGTH_LONG);
+                Toast toast = Toast.makeText(context, "OurMusicPlugin: " +
+                    "Will prompt Login to Spotify!", Toast.LENGTH_LONG);
                 toast.show();
                 Log.i("OurMusicPlugin: Will prompt Login to Spotify!", message);
                 OurMusicPlugin.this.callback = callback;
@@ -66,8 +66,8 @@ public class OurMusicPlugin extends CordovaPlugin
                 if ( resultCode == Activity.RESULT_OK ) {
                     AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
                     if ( response.getType() == AuthenticationResponse.Type.TOKEN ) {
-                        Config playerConfig = new Config(cordova.getActivity().getApplicationContext(),
-                                response.getAccessToken(), CLIENT_ID);
+                        final Context context = cordova.getActivity().getApplicationContext();
+                        Config playerConfig = new Config(context, response.getAccessToken(), CLIENT_ID);
                         player = Spotify.getPlayer(playerConfig, this, new Player.InitializationObserver() {
                             @Override
                             public void onInitialized(Player player) {
@@ -76,7 +76,7 @@ public class OurMusicPlugin extends CordovaPlugin
                                 player.play("spotify:track:2TpxZ7JUBn3uw46aR7qd6V");
                                 String message = "Player initialized!";
                                 Log.i("OurMusicPlugin", message);
-                                Toast toast = Toast.makeText(activity.getApplicationContext(),
+                                Toast toast = Toast.makeText(context,
                                         "OurMusicPlugin: Will prompt Login to Spotify!", Toast.LENGTH_LONG);
                                 toast.show();
                                 OurMusicPlugin.this.callback.success("OurMusicPlugin: " + message);
