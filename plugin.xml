@@ -7,8 +7,11 @@
     <description>OurMusic Plugin</description>
     <license>Apache 2.0</license>
     <keywords>ourmusic,plugin</keywords>
+    <engines>
+      <engine name="cordova-android" version=">=3.6.0" /><!-- Requires CordovaPlugin.preferences -->
+    </engines>
     <js-module src="www/ourmusic-plugin.js" name="ourmusic-plugin">
-        <clobbers target="ourmusic-plugin" />
+      <clobbers target="ourmusic-plugin" />
     </js-module>
     <platform name="android">
       <config-file target="res/xml/config.xml" parent="/*">
