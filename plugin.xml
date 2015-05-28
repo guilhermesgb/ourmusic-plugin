@@ -28,6 +28,7 @@
         </activity>
       </config-file>
       <source-file src="app/src/main/java/com/ourmusic/plugin/LoginActivity.java" target-dir="src/com/ourmusic/plugin"/>
-      <framework src="app/libs" custom="true" />
+      <framework src="app/libs/spotify-auth-1.0.0-beta10.aar" custom="true" />
+      <framework src="app/libs/spotify-player-1.0.0-beta10.aar" custom="true" />
     </platform>
 </plugin>
