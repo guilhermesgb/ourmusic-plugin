@@ -1,0 +1,14 @@
+{
+  "name": "cordova-plugin-contacts",
+  "version": "1.0.1-dev"  "description": "OurMusic Contacts Plugin",
+  "cordova": {
+    "id": "cordova-plugin-contacts",
+    "platforms": [
+      "android"
+    ]
+  },
+  "repository:" {
+      "type": "git",
+      "url": "git@github.com:/guilhermesgb/ourmusic.git
+  }
+}
