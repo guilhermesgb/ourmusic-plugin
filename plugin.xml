@@ -9,6 +9,9 @@
     <license>Apache 2.0</license>
     <keywords>ourmusic,cordova,plugin</keywords>
     <repo>https://github.com/guilhermesgb/ourmusic-plugin.git</repo>
+    <engines>
+      <engine name="cordova" version=">=3.4.0"/>
+    </engines>
     <js-module src="www/ourmusic-plugin.js" name="ourmusic-plugin">
       <clobbers target="ourmusic-plugin" />
     </js-module>
