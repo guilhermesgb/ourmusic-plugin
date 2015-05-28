@@ -14,7 +14,6 @@ import com.spotify.sdk.android.player.ConnectionStateCallback;
 import com.spotify.sdk.android.player.Player;
 import com.spotify.sdk.android.player.Spotify;
 
-import com.ourmusic.ourmusic.android.R;
 
 public class LoginActivity extends Activity {
 
@@ -23,7 +22,10 @@ public class LoginActivity extends Activity {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-        setContentView(R.layout.com_ourmusic_plugin_activity_login);
+        setContentView(getResources()
+            .getIdentifier("com_ourmusic_plugin_activity_login",
+                "id", "com.ourmusic.ourmusic")
+        );
 
         AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(OurMusicPlugin.CLIENT_ID,
                 AuthenticationResponse.Type.TOKEN, OurMusicPlugin.REDIRECT_URI);
