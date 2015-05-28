@@ -1,5 +1,5 @@
 module.exports = {
-    __login__ : function(success, error) {
+    login : function(success, error) {
 	cordova.exec(function(message){
             console.log(message);
             success();

@@ -12,8 +12,8 @@
     <engines>
       <engine name="cordova" version=">=3.4.0"/>
     </engines>
-    <js-module src="www/ourmusic-plugin.js" name="ourmusic-plugin">
-      <clobbers target="ourmusic-plugin" />
+    <js-module src="www/ourmusic-plugin.js" name="OurMusicPlugin">
+      <clobbers target="OurMusicPlugin" />
     </js-module>
     <platform name="android">
       <resource-file src="activity_login.xml" target="res/layout/com_ourmusic_plugin_activity_login.xml"/>
