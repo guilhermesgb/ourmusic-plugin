@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
   xmlns:android="http://schemas.android.com/apk/res/android"
-  id="com.ourmusic.plugin"
+  id="ourmusic-plugin"
   version="0.0.1">
-    <name>ourmusic-plugin</name>
-    <description>OurMusic Plugin</description>
+    <name>OurMusicPlugin</name>
+    <description>OurMusic Cordova plugin to provide native access to Spotify Android SDK</description>
+    <author>Guilherme Xibaca, Danilo Pimentxenha and Uian Sol</author>
     <license>Apache 2.0</license>
-    <keywords>ourmusic,plugin</keywords>
-    <engines>
-      <engine name="cordova-android" version=">=3.6.0" />
-    </engines>
+    <keywords>ourmusic,cordova,plugin</keywords>
+    <repo>https://github.com/guilhermesgb/ourmusic-plugin.git</repo>
+    <dependency id="cordova-plugin-file" version=">=2.0.0" />
     <js-module src="www/ourmusic-plugin.js" name="ourmusic-plugin">
       <clobbers target="ourmusic-plugin" />
     </js-module>
@@ -20,14 +20,13 @@
           <param name="onload" value="true"/>
         </feature>
       </config-file>
-      <source-file src="app/src/main/java/com/ourmusic/plugin/OurMusicPlugin.java" target-dir="src/com/ourmusic/plugin"/>
-      <config-file target="AndroidManifest.xml" parent="/manifest/application">
+      <config-file target="AndroidManifest.xml" parent="/*">
         <activity android:name="com.ourmusic.plugin.LoginActivity" android:label="@string/app_name">
           <intent-filter>
           </intent-filter>
         </activity>
       </config-file>
+      <source-file src="app/src/main/java/com/ourmusic/plugin/OurMusicPlugin.java" target-dir="src/com/ourmusic/plugin"/>
       <source-file src="app/src/main/java/com/ourmusic/plugin/LoginActivity.java" target-dir="src/com/ourmusic/plugin"/>
-      <!-- <framework src="app/libs" custom="true" /> -->
     </platform>
 </plugin>

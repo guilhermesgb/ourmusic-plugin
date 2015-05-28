@@ -9,6 +9,18 @@
   },
   "repository:" {
       "type": "git",
-      "url": "git@github.com:/guilhermesgb/ourmusic.git
-  }
+      "url": "git@github.com:/guilhermesgb/ourmusic-plugin.git
+  },
+  "keywords": [
+    "cordova",
+    "ourmusic",
+    "plugin",
+    "ecosystem:cordova",
+    "cordova-android"
+  ],
+  "peerDependencies": {
+      "cordova-plugin-file": ">=2.0.0"
+  },
+  "author": "Guilherme Xibaca, Danilo Pimentxenha and Uian Sol", 
+  "license": "Apache 2.0"
 }
