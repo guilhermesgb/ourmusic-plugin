@@ -51,7 +51,7 @@ public class OurMusicPlugin extends CordovaPlugin
                 Toast toast = Toast.makeText(context, "OurMusicPlugin: " +
                     "Will prompt Login to Spotify!", Toast.LENGTH_LONG);
                 toast.show();
-                Log.i("OurMusicPlugin: Will prompt Login to Spotify!", message);
+                Log.i("OurMusicPlugin", "Will prompt Login to Spotify!");
                 OurMusicPlugin.this.callback = callback;
                 Intent intent = new Intent(context, LoginActivity.class);
                 cordova.startActivityForResult(OurMusicPlugin.this, intent, REQUEST_CODE_LOGIN_DELEGATE);
@@ -77,7 +77,7 @@ public class OurMusicPlugin extends CordovaPlugin
                                 String message = "Player initialized!";
                                 Log.i("OurMusicPlugin", message);
                                 Toast toast = Toast.makeText(context,
-                                        "OurMusicPlugin: Will prompt Login to Spotify!", Toast.LENGTH_LONG);
+                                        "OurMusicPlugin: " + message, Toast.LENGTH_LONG);
                                 toast.show();
                                 OurMusicPlugin.this.callback.success("OurMusicPlugin: " + message);
                             }
