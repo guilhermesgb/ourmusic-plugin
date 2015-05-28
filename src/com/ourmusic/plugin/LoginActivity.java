@@ -2,35 +2,34 @@ package com.ourmusic.plugin;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Window;
 
-/*import com.spotify.sdk.android.authentication.AuthenticationClient;
+import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
 import com.spotify.sdk.android.player.Config;
 import com.spotify.sdk.android.player.ConnectionStateCallback;
 import com.spotify.sdk.android.player.Player;
-import com.spotify.sdk.android.player.Spotify;*/
+import com.spotify.sdk.android.player.Spotify;
 
 
-public class LoginActivity extends ActionBarActivity {
+public class LoginActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.com_ourmusic_plugin_activity_login);
 
-/*        AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(OurMusicPlugin.CLIENT_ID,
+        AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(OurMusicPlugin.CLIENT_ID,
                 AuthenticationResponse.Type.TOKEN, OurMusicPlugin.REDIRECT_URI);
         builder.setScopes(new String[]{"user-read-private", "streaming"});
         AuthenticationRequest request = builder.build();
 
-        AuthenticationClient.openLoginActivity(this, OurMusicPlugin.REQUEST_CODE_LOGIN_LAUNCH, request);*/
+        AuthenticationClient.openLoginActivity(this, OurMusicPlugin.REQUEST_CODE_LOGIN_LAUNCH, request);
     }
 
     @Override
