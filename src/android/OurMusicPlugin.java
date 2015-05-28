@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
@@ -46,8 +47,13 @@ public class OurMusicPlugin extends CordovaPlugin
         cordova.getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                Context context = cordova.getActivity().getApplicationContext();
+                Toast toast = Toast.makeText(activity.getApplicationContext(),
+                        "OurMusicPlugin: Will prompt Login to Spotify!", Toast.LENGTH_LONG);
+                toast.show();
+                Log.i("OurMusicPlugin: Will prompt Login to Spotify!", message);
                 OurMusicPlugin.this.callback = callback;
-                Intent intent = new Intent(cordova.getActivity().getApplicationContext(), LoginActivity.class);
+                Intent intent = new Intent(context, LoginActivity.class);
                 cordova.startActivityForResult(OurMusicPlugin.this, intent, REQUEST_CODE_LOGIN_DELEGATE);
             }
         });
@@ -70,6 +76,9 @@ public class OurMusicPlugin extends CordovaPlugin
                                 player.play("spotify:track:2TpxZ7JUBn3uw46aR7qd6V");
                                 String message = "Player initialized!";
                                 Log.i("OurMusicPlugin", message);
+                                Toast toast = Toast.makeText(activity.getApplicationContext(),
+                                        "OurMusicPlugin: Will prompt Login to Spotify!", Toast.LENGTH_LONG);
+                                toast.show();
                                 OurMusicPlugin.this.callback.success("OurMusicPlugin: " + message);
                             }
 
