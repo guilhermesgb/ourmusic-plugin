@@ -29,6 +29,7 @@
       <source-file src="src/android/OurMusicPlugin.java" target-dir="src/com/ourmusic/plugin"/>
       <source-file src="src/android/LoginActivity.java" target-dir="src/com/ourmusic/plugin"/>
       <resource-file src="activity_login.xml" target="res/layout/com_ourmusic_plugin_activity_login.xml"/>
-      <framework src="spotify-android-sdk" custom="true"/>
+      <framework src="spotify-sdk-android/auth" custom="true"/>
+      <framework src="spotify-sdk-android/player" custom="true"/>
     </platform>
 </plugin>
