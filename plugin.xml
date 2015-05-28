@@ -9,7 +9,6 @@
     <license>Apache 2.0</license>
     <keywords>ourmusic,cordova,plugin</keywords>
     <repo>https://github.com/guilhermesgb/ourmusic-plugin.git</repo>
-    <dependency id="cordova-plugin-file" version=">=2.0.0" />
     <js-module src="www/ourmusic-plugin.js" name="ourmusic-plugin">
       <clobbers target="ourmusic-plugin" />
     </js-module>
