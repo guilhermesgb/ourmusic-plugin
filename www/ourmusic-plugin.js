@@ -1,9 +1,9 @@
-window.login = function(success, error) {
+var __login__ = function(success, error) {
     cordova.exec(function(message){
-           window.alert(message);
+           console.log(message);
            success();
         }, function(error){
-           window.alert(error);
+           console.log(error);
            error();
         }, "login", []);
 };
