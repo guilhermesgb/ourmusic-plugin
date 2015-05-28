@@ -14,7 +14,7 @@ import com.spotify.sdk.android.player.ConnectionStateCallback;
 import com.spotify.sdk.android.player.Player;
 import com.spotify.sdk.android.player.Spotify;
 
-import com.ourmusic.android.R;
+import com.ourmusic.ourmusic.android.R;
 
 public class LoginActivity extends Activity {
 
