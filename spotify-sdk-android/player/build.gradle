@@ -9,7 +9,7 @@ project.group = 'com.ourmusic.plugin'
 dependencies {
     compile 'com.android.support:support-v4:22.0.0'
     compile 'com.android.support:appcompat-v7:22.0.0'
-    compile files('./libs/jnihelpers-1.0.jar'
+    compile files('./libs/jnihelpers-1.0.jar')
 }
 
 android {
@@ -30,6 +30,7 @@ android {
             manifest.srcFile 'AndroidManifest.xml'
             java.srcDirs = ['libs']
             res.srcDirs = ['res']
+            jni.srcDirs = ['jni']
         }
     }
 }
