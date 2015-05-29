@@ -23,8 +23,10 @@
           <param name="onload" value="true"/>
         </feature>
       </config-file>
-      <config-file target="AndroidManifest.xml" parent="/*">
+      <config-file target="AndroidManifest.xml" parent="/manifest/application">
         <activity android:name="com.ourmusic.plugin.LoginActivity" android:label="@string/app_name">
+        </activity>
+        <activity android:name="com.spotify.sdk.android.authentication.LoginActivity" android:theme="@android:style/Theme.Translucent.NoTitleBar">
         </activity>
       </config-file>
       <source-file src="src/android/OurMusicPlugin.java" target-dir="src/com/ourmusic/plugin"/>
