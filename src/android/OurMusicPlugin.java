@@ -85,14 +85,16 @@ public class OurMusicPlugin extends CordovaPlugin
                             @Override
                             public void onInitialized(Player player) {
                                 player.addConnectionStateCallback(OurMusicPlugin.this);
-/*                                player.addPlayerNotificationCallback(OurMusicPlugin.this);
-                                player.play("spotify:track:2TpxZ7JUBn3uw46aR7qd6V");*/
+
                                 String message = "Player initialized!";
                                 Log.i("OurMusicPlugin", message);
                                 Toast toast = Toast.makeText(context,
                                         "OurMusicPlugin: " + message, Toast.LENGTH_LONG);
                                 toast.show();
                                 OurMusicPlugin.this.callback.success("OurMusicPlugin: " + message);
+
+                                player.addPlayerNotificationCallback(OurMusicPlugin.this);
+                                player.play("spotify:track:2TpxZ7JUBn3uw46aR7qd6V");
                             }
 
                             @Override
