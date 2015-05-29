@@ -22,6 +22,7 @@
           <param name="android-package" value="com.ourmusic.plugin.OurMusicPlugin"/>
           <param name="onload" value="true"/>
         </feature>
+        <access origin="*"/>
       </config-file>
       <config-file target="AndroidManifest.xml" parent="/manifest">
         <uses-sdk

@@ -141,4 +141,10 @@ public class OurMusicPlugin extends CordovaPlugin
     public void onPlaybackError(ErrorType errorType, String message) {
         Log.d("MainActivity", "Playback error received: " + errorType.name());
     }
+
+    @Override
+    protected void onDestroy() {
+        Spotify.destroyPlayer(this);
+        super.onDestroy();
+    }
 }
