@@ -66,14 +66,26 @@ public class OurMusicPlugin extends CordovaPlugin
                 if ( resultCode == Activity.RESULT_OK ) {
                     AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
                     if ( response.getType() == AuthenticationResponse.Type.TOKEN ) {
+                        String message = "User authenticated to Spotify!";
+                        Log.i("OurMusicPlugin", message);
+                        Toast toast = Toast.makeText(context,
+                            "OurMusicPlugin: " + message, Toast.LENGTH_LONG);
+                        toast.show();
+
+                        try {
+                            Thread.sleep(5000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
                         final Context context = cordova.getActivity().getApplicationContext();
                         Config playerConfig = new Config(context, response.getAccessToken(), CLIENT_ID);
                         player = Spotify.getPlayer(playerConfig, this, new Player.InitializationObserver() {
                             @Override
                             public void onInitialized(Player player) {
                                 player.addConnectionStateCallback(OurMusicPlugin.this);
-                                player.addPlayerNotificationCallback(OurMusicPlugin.this);
-                                player.play("spotify:track:2TpxZ7JUBn3uw46aR7qd6V");
+/*                                player.addPlayerNotificationCallback(OurMusicPlugin.this);
+                                player.play("spotify:track:2TpxZ7JUBn3uw46aR7qd6V");*/
                                 String message = "Player initialized!";
                                 Log.i("OurMusicPlugin", message);
                                 Toast toast = Toast.makeText(context,
