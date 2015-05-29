@@ -10,9 +10,7 @@ dependencies {
     compile 'com.android.support:support-v4:22.0.0'
     compile 'com.android.support:appcompat-v7:22.0.0'
     compile files('./libs/jnihelpers-1.0.jar')
-    compile files('./libs/gnustl_shared-lib.zip')
-    compile files('./libs/spotify_embedded_shared-lib.zip')
-    compile files('./libs/spotify_sdk-lib.zip')
+    compile files('./libs/spotify_native_libs.jar')
 }
 
 android {
