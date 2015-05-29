@@ -17,9 +17,6 @@
     </js-module>
     <platform name="android">
       <resource-file src="res/layout/com_ourmusic_plugin_activity_login.xml" target="res/layout/com_ourmusic_plugin_activity_login.xml"/>
-<!--      <resource-file src="res/layout/com_spotify_sdk_login_activity.xml" target="res/layout/com_spotify_sdk_login_activity.xml"/>-->
-<!--      <resource-file src="res/layout/com_spotify_sdk_login_dialog.xml" target="res/layout/com_spotify_sdk_login_dialog.xml"/>-->
-<!--      <resource-file src="res/values/values.xml" target="res/values/values.xml"/>-->
       <config-file target="res/xml/config.xml" parent="/*">
         <feature name="OurMusicPlugin">
           <param name="android-package" value="com.ourmusic.plugin.OurMusicPlugin"/>
@@ -40,8 +37,6 @@
       </config-file>
       <source-file src="src/android/OurMusicPlugin.java" target-dir="src/com/ourmusic/plugin"/>
       <source-file src="src/android/LoginActivity.java" target-dir="src/com/ourmusic/plugin"/>
-      <!--<source-file src="libs/spotify-sdk-android-auth.jar" target-dir="libs"/>-->
-      <!--<source-file src="spotify-sdk-android-player.jar" target-dir="libs"/>-->
       <framework src="spotify-sdk-android/auth" custom="true"/>
       <framework src="spotify-sdk-android/player" custom="true"/>
     </platform>
