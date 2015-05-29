@@ -24,7 +24,7 @@ public class LoginActivity extends Activity {
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(getResources()
             .getIdentifier("com_ourmusic_plugin_activity_login",
-                "id", "com.ourmusic.ourmusic")
+                "id", "com.ourmusic.plugin")
         );
 
         AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(OurMusicPlugin.CLIENT_ID,
