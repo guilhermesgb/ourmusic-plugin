@@ -2,10 +2,10 @@ module.exports = {
     login : function(success, error) {
 	cordova.exec(function(message){
             console.log(message);
-            success();
+            success(message);
         }, function(error){
             console.log(error);
-            error();
+            error(error);
         },"OurMusicPlugin", "login", []);
     }
 };
