@@ -41,5 +41,6 @@
       <source-file src="src/android/LoginActivity.java" target-dir="src/com/ourmusic/plugin"/>
       <framework src="spotify-sdk-android/auth" custom="true"/>
       <framework src="spotify-sdk-android/player" custom="true"/>
+      <preference name="AndroidLaunchMode" value="standard"/>
     </platform>
 </plugin>
