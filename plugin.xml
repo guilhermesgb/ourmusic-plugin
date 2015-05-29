@@ -23,6 +23,7 @@
           <param name="onload" value="true"/>
         </feature>
         <access origin="*"/>
+        <access origin="ourmusic://*" launch-external="yes"/>
       </config-file>
       <config-file target="AndroidManifest.xml" parent="/manifest">
         <uses-sdk
