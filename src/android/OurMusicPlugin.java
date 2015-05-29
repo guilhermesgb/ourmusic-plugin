@@ -143,7 +143,7 @@ public class OurMusicPlugin extends CordovaPlugin
     }
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         Spotify.destroyPlayer(this);
         super.onDestroy();
     }
