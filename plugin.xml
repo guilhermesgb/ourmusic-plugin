@@ -16,12 +16,21 @@
       <clobbers target="OurMusicPlugin" />
     </js-module>
     <platform name="android">
-      <resource-file src="activity_login.xml" target="res/layout/com_ourmusic_plugin_activity_login.xml"/>
+      <resource-file src="res/layout/com_ourmusic_plugin_activity_login.xml" target="res/layout/com_ourmusic_plugin_activity_login.xml"/>
+      <resource-file src="res/layout/com_spotify_sdk_login_activity.xml" target="res/layout/com_spotify_sdk_login_activity.xml"/>
+      <resource-file src="res/layout/com_spotify_sdk_login_dialog.xml" target="res/layout/com_spotify_sdk_login_dialog.xml"/>
+      <resource-file src="res/values/values.xml" target="res/values/values.xml"/>
       <config-file target="res/xml/config.xml" parent="/*">
         <feature name="OurMusicPlugin">
           <param name="android-package" value="com.ourmusic.plugin.OurMusicPlugin"/>
           <param name="onload" value="true"/>
         </feature>
+      </config-file>
+      <config-file target="AndroidManifest.xml" parent="/manifest">
+        <uses-sdk
+          android:minSdkVersion="14"
+          android:targetSdkVersion="21" />
+        <application android:allowBackup="true" />
       </config-file>
       <config-file target="AndroidManifest.xml" parent="/manifest/application">
         <activity android:name="com.ourmusic.plugin.LoginActivity" android:label="@string/app_name">
@@ -31,7 +40,7 @@
       </config-file>
       <source-file src="src/android/OurMusicPlugin.java" target-dir="src/com/ourmusic/plugin"/>
       <source-file src="src/android/LoginActivity.java" target-dir="src/com/ourmusic/plugin"/>
-      <source-file src="spotify-sdk-android-auth.jar" target-dir="libs"/>
+      <source-file src="libs/spotify-sdk-android-auth.jar" target-dir="libs"/>
       <!--<source-file src="spotify-sdk-android-player.jar" target-dir="libs"/>-->
       <!--<framework src="spotify-sdk-android/auth" custom="true"/>-->
       <framework src="spotify-sdk-android/player" custom="true"/>
