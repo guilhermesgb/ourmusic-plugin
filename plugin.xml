@@ -31,9 +31,9 @@
       </config-file>
       <source-file src="src/android/OurMusicPlugin.java" target-dir="src/com/ourmusic/plugin"/>
       <source-file src="src/android/LoginActivity.java" target-dir="src/com/ourmusic/plugin"/>
-      <!--<source-file src="spotify-sdk-android-auth.jar" target-dir="libs"/>-->
+      <source-file src="spotify-sdk-android-auth.jar" target-dir="libs"/>
       <!--<source-file src="spotify-sdk-android-player.jar" target-dir="libs"/>-->
-      <framework src="spotify-sdk-android/auth" custom="true"/>
+      <!--<framework src="spotify-sdk-android/auth" custom="true"/>-->
       <framework src="spotify-sdk-android/player" custom="true"/>
     </platform>
 </plugin>
