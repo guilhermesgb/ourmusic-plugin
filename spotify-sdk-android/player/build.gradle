@@ -19,6 +19,12 @@ android {
     defaultConfig {
         minSdkVersion Integer.parseInt(project.ANDROID_BUILD_MIN_SDK_VERSION)
         targetSdkVersion Integer.parseInt(project.ANDROID_BUILD_TARGET_SDK_VERSION)
+
+        ndk {
+            moduleName "gnustl_shared"
+            moduleName "spotify_embedded_shared"
+            moduleName "spotify_sdk"
+        }
     }
 
     lintOptions {
@@ -30,7 +36,72 @@ android {
             manifest.srcFile 'AndroidManifest.xml'
             java.srcDirs = ['libs']
             res.srcDirs = ['res']
-            jni.srcDirs = ['jni']
+            jniLibs.srcDir = ['jni']
+            jni.srcDirs = []
         }
+    }
+
+    productFlavors {
+        armv7 {
+            ndk {
+                abiFilter "armeabi-v7a"
+            }
+        }
+        arm {
+            ndk {
+                abiFilter "armeabi"
+            }
+        }
+        fat
+    }
+
+    task buildNative(type: Exec, description: 'Compile JNI source via NDK') {
+        def ndkDir
+
+        Properties properties = new Properties()
+        File localProps = project.rootProject.file('local.properties')
+        if (localProps.exists()) {
+            properties.load(localProps.newDataInputStream())
+            ndkDir = properties.getProperty('ndk.dir')
+        } else {
+            ndkDir = System.getenv('ANDROID_NDK_HOME')
+        }
+
+        if (!ndkDir) {
+            throw new ProjectConfigurationException("Cannot find android ndk.", null)
+        }
+
+        commandLine "$ndkDir/ndk-build",
+            '-C', file('jni').absolutePath,
+            '-j', Runtime.runtime.availableProcessors(),
+            'all',
+            'NDK_DEBUG=1'
+    }
+
+    task cleanNative(type: Exec, description: 'Clean JNI object files') {
+        def ndkDir
+
+        Properties properties = new Properties()
+        File localProps = project.rootProject.file('local.properties')
+        if (localProps.exists()) {
+            properties.load(localProps.newDataInputStream())
+            ndkDir = properties.getProperty('ndk.dir')
+        } else {
+            ndkDir = System.getenv('ANDROID_NDK_HOME')
+        }
+
+        if (!ndkDir) {
+            throw new ProjectConfigurationException("Cannot find android ndk.", null)
+        }
+
+        commandLine "$ndkDir/ndk-build",
+            '-C', file('jni').absolutePath,
+            'clean'
+    }
+
+    clean.dependsOn 'cleanNative'
+
+    tasks.withType(JavaCompile) {
+        compileTask -> compileTask.dependsOn buildNative
     }
 }
