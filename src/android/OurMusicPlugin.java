@@ -119,9 +119,9 @@ public class OurMusicPlugin extends CordovaPlugin
                 OurMusicPlugin.this.callback.error("OurMusicPlugin: " + error);
                 break;
             default:
-		String error = "nada aqui";
-                Log.e("OurMusicPlugin", error);
-                OurMusicPlugin.this.callback.error("OurMusicPlugin: " + error);
+		String error2 = "nada aqui";
+                Log.e("OurMusicPlugin", error2);
+                OurMusicPlugin.this.callback.error("OurMusicPlugin: " + error2);
                 break;
         }
     }
