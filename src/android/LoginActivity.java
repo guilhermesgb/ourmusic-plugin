@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.net.Uri;
 import android.view.Window;
 
 import com.spotify.sdk.android.authentication.AuthenticationClient;
@@ -38,7 +39,7 @@ public class LoginActivity extends Activity {
 	    AuthenticationResponse response = AuthenticationResponse.fromUri(uri);
         
 	    switch (response.getType()) {
-            case AuthenticationResponse.Type.TOKEN:
+            case TOKEN:
 		setResult(Activity.RESULT_OK, intent);
 		finish();
                 break;
