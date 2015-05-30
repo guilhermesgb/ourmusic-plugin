@@ -36,7 +36,7 @@ public class LoginActivity extends Activity {
 	super.onNewIntent(intent);
     
 	Uri uri = intent.getData();
-	Log.i("OurMusicPlugin",uri.toString())
+	Log.i("OurMusicPlugin",uri.toString());
 	if (uri != null) {
 	    AuthenticationResponse response = AuthenticationResponse.fromUri(uri);
         
