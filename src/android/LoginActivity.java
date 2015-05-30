@@ -20,37 +20,34 @@ public class LoginActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-        setContentView(getResources()
-            .getIdentifier("com_ourmusic_plugin_activity_login",
-                "layout", "com.ourmusic.ourmusic")
-        );
 
         AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(OurMusicPlugin.CLIENT_ID,
                 AuthenticationResponse.Type.TOKEN, OurMusicPlugin.REDIRECT_URI);
         builder.setScopes(new String[]{"user-read-private", "streaming"});
         AuthenticationRequest request = builder.build();
 
-        AuthenticationClient.openLoginActivity(this, OurMusicPlugin.REQUEST_CODE_LOGIN_LAUNCH, request);
+        AuthenticationClient.openLoginInBrowser(this, request);
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        switch (requestCode) {
-            case OurMusicPlugin.REQUEST_CODE_LOGIN_LAUNCH:
-                if ( resultCode == Activity.RESULT_OK ){
-                    setResult(Activity.RESULT_OK, intent);
-                    finish();
-                }
-                else {
-                    setResult(Activity.RESULT_CANCELED, intent);
-                    finish();
-                }
+    protected void onNewIntent(Intent intent) {
+	super.onNewIntent(intent);
+    
+	Uri uri = intent.getData();
+	if (uri != null) {
+	    AuthenticationResponse response = AuthenticationResponse.fromUri(uri);
+        
+	    switch (response.getType()) {
+            case AuthenticationResponse.Type.TOKEN:
+		setResult(Activity.RESULT_OK, intent);
+		finish();
                 break;
+		
             default:
-                super.onActivityResult(requestCode, resultCode, intent);
-                break;
-        }
+		setResult(Activity.RESULT_CANCELED, intent);
+		finish();
+		break;
+	    }
+	}
     }
 }
