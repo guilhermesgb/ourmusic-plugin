@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.net.Uri;
 import android.view.Window;
+import android.util.Log;
 
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
@@ -35,6 +36,7 @@ public class LoginActivity extends Activity {
 	super.onNewIntent(intent);
     
 	Uri uri = intent.getData();
+	Log.i("OurMusicPlugin",uri.toString())
 	if (uri != null) {
 	    AuthenticationResponse response = AuthenticationResponse.fromUri(uri);
         

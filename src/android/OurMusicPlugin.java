@@ -61,6 +61,7 @@ public class OurMusicPlugin extends CordovaPlugin
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+	Log.i("OurMusicPlugin2", String.valueOf(requestCode));
         switch (requestCode) {
             case REQUEST_CODE_LOGIN_DELEGATE:
                 if ( resultCode == Activity.RESULT_OK ) {
@@ -118,6 +119,9 @@ public class OurMusicPlugin extends CordovaPlugin
                 OurMusicPlugin.this.callback.error("OurMusicPlugin: " + error);
                 break;
             default:
+		String error = "nada aqui";
+                Log.e("OurMusicPlugin", error);
+                OurMusicPlugin.this.callback.error("OurMusicPlugin: " + error);
                 break;
         }
     }
