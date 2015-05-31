@@ -39,7 +39,7 @@ public class LoginActivity extends Activity {
 	Log.i("OurMusicPlugin",uri.toString());
 	if (uri != null) {
 	    AuthenticationResponse response = AuthenticationResponse.fromUri(uri);
-        
+Log.i("OurMusicPlugin4", response.getType().toString() + " - " + AuthenticationResponse.Type.TOKEN.toString()) ;        
 	    switch (response.getType()) {
             case TOKEN:
 		setResult(Activity.RESULT_OK, intent);
