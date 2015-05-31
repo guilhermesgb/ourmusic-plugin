@@ -61,11 +61,12 @@ public class OurMusicPlugin extends CordovaPlugin
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-	Log.i("OurMusicPlugin2", String.valueOf(requestCode));
+	Log.i("OurMusicPlugin2", String.valueOF(resultCode));
         switch (requestCode) {
             case REQUEST_CODE_LOGIN_DELEGATE:
                 if ( resultCode == Activity.RESULT_OK ) {
                     AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
+		    Log.i("OurMusicPlugin3", String.valueOF(response.getType() + " " + AuthenticationResponse.Type.TOKEN)  ;
                     if ( response.getType() == AuthenticationResponse.Type.TOKEN ) {
                         final Context context = cordova.getActivity().getApplicationContext();
 
@@ -119,7 +120,7 @@ public class OurMusicPlugin extends CordovaPlugin
                 OurMusicPlugin.this.callback.error("OurMusicPlugin: " + error);
                 break;
             default:
-		String error2 = "nada aqui";
+		String error2 = "Login failed: bad result from Spotify[2]";
                 Log.e("OurMusicPlugin", error2);
                 OurMusicPlugin.this.callback.error("OurMusicPlugin: " + error2);
                 break;
