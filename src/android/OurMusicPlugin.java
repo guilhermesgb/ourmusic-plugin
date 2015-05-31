@@ -66,7 +66,7 @@ public class OurMusicPlugin extends CordovaPlugin
             case REQUEST_CODE_LOGIN_DELEGATE:
                 if ( resultCode == Activity.RESULT_OK ) {
                     AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
-		    Log.i("OurMusicPlugin3", String.valueOf(response.getType() + " " + AuthenticationResponse.Type.TOKEN)) ;
+		    Log.i("OurMusicPlugin3", response.getType().toString() + " - " + AuthenticationResponse.Type.TOKEN.toString()) ;
                     if ( response.getType() == AuthenticationResponse.Type.TOKEN ) {
                         final Context context = cordova.getActivity().getApplicationContext();
 
