@@ -42,12 +42,16 @@ public class LoginActivity extends Activity {
 Log.i("OurMusicPlugin4", response.getType().toString() + " - " + AuthenticationResponse.Type.TOKEN.toString()) ;        
 	    switch (response.getType()) {
             case TOKEN:
-		setResult(Activity.RESULT_OK, intent);
+		Intent response_intent = new Intent();
+		response_intent.putExtra("response",response);
+		setResult(Activity.RESULT_OK, response_intent);
 		finish();
                 break;
 		
             default:
-		setResult(Activity.RESULT_CANCELED, intent);
+		Intent response_intent = new Intent();
+		response_intent.putExtra("response",response);
+		setResult(Activity.RESULT_OK, response_intent);
 		finish();
 		break;
 	    }

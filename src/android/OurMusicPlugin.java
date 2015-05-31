@@ -65,7 +65,7 @@ public class OurMusicPlugin extends CordovaPlugin
         switch (requestCode) {
             case REQUEST_CODE_LOGIN_DELEGATE:
                 if ( resultCode == Activity.RESULT_OK ) {
-                    AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
+                    AuthenticationResponse response = intent.getExtra("response");
 		    Log.i("OurMusicPlugin3", response.getType().toString() + " - " + AuthenticationResponse.Type.TOKEN.toString()) ;
                     if ( response.getType() == AuthenticationResponse.Type.TOKEN ) {
                         final Context context = cordova.getActivity().getApplicationContext();
