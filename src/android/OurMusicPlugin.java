@@ -41,10 +41,10 @@ public class OurMusicPlugin extends CordovaPlugin
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callback)
             throws JSONException {
-	if(action.eguals("login")) {
+	if(action.equals("login")) {
             loginToSpotify(callback);
             return true;
-	} if(action.eguals("play") ){
+	} if(action.equals("play") ){
             playSong(args,callback);
             return true;
 	} if(action.equals("stop")) {
@@ -165,7 +165,7 @@ public class OurMusicPlugin extends CordovaPlugin
             default:
                 error = "Login failed: unknown reason";
                 Log.e("OurMusicPlugin", error);
-                OurMusicPlugin.this.logincallback.error(SPOTIFY_LOGIN_ERROR);
+                OurMusicPlugin.this.loginCallback.error(SPOTIFY_LOGIN_ERROR);
                 break;
         }
     }
@@ -203,13 +203,13 @@ public class OurMusicPlugin extends CordovaPlugin
     @Override
     public void onPlaybackEvent(EventType eventType, PlayerState playerState) {
         Log.d("OurMusicPlugin", "Playback event received: " + eventType.name());
-	playStopCallback.success(PlayerNotificationCallback.EventType.valueOf(eventType));
+	playStopCallback.success(eventType.toString());
     }
 
     @Override
     public void onPlaybackError(ErrorType errorType, String message) {
         Log.d("MainActivity", "Playback error received: " + errorType.name());
-	playStopCallback.error(PlayerNotificationCallback.ErrorType.valueOf(errorType));
+	playStopCallback.error(errorType.toString());
     }
 
     @Override
