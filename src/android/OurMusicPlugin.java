@@ -18,6 +18,7 @@ import com.spotify.sdk.android.player.Spotify;
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaInterface;
 import org.apache.cordova.CordovaPlugin;
+import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -205,7 +206,13 @@ public class OurMusicPlugin extends CordovaPlugin
     @Override
     public void onPlaybackEvent(EventType eventType, PlayerState playerState) {
         Log.d("OurMusicPlugin", "Playback event received: " + eventType.name());
-	playStopCallback.success(eventType.toString());
+	successCallback(playStopCallback,eventType.toString());
+    }
+
+    private void successCallback(CallbackContext callback, String message){
+	PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, message);
+	pluginResult.setKeepCallback(true);
+	callback.sendPluginResult(pluginResult);
     }
 
     @Override
