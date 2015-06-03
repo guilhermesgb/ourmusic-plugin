@@ -21,6 +21,8 @@ import org.apache.cordova.CordovaPlugin;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.lang.Exception;
+
 
 public class OurMusicPlugin extends CordovaPlugin
       implements ConnectionStateCallback, PlayerNotificationCallback {
@@ -53,7 +55,7 @@ public class OurMusicPlugin extends CordovaPlugin
 	OurMusicPlugin.this.playStopCallback = callback;
 	try{
 	    player.play(args.getString(0));
-	} catch (RejectedExecutionException e) {
+	} catch (Exception e) {
 	    OurMusicPlugin.this.playStopCallback.error(e.getMessage());
 	}
 	Log.i("OurMusicPlugin-play", "mandou tocar");
