@@ -65,8 +65,10 @@ public class OurMusicPlugin extends CordovaPlugin
 
     private void playSong(JSONArray args, final CallbackContext callback) {
 	this.playStopCallback = callback;
-	initializePlayerIfNeeded(args.getString(2),callback);
-	loginToPlayerIfNeeded(args.getString(2));
+	try{
+	    initializePlayerIfNeeded(args.getString(2),callback);
+	    loginToPlayerIfNeeded(args.getString(2));
+	} catch(Exception e){}
 	if( player != null){
 	    try{
 		player.play(args.getString(0));
