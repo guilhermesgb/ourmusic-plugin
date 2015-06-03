@@ -51,7 +51,11 @@ public class OurMusicPlugin extends CordovaPlugin
 
     private void playSong(JSONArray args, final CallbackContext callback) {
 	OurMusicPlugin.this.playStopCallback = callback;
-	player.play(args.getString(0));
+	try{
+	    player.play(args.getString(0));
+	} catch (RejectedExecutionException e) {
+	    OurMusicPlugin.this.playStopCallback.error(e.getMessage());
+	}
 	Log.i("OurMusicPlugin-play", "mandou tocar");
     }
 
