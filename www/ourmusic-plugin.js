@@ -6,13 +6,13 @@ module.exports = {
             error(error);
         },"OurMusicPlugin", "login", []);
     },
-    play : function(uri,success, error) {
+    play : function(uri,time,token,success, error) {
 	cordova.exec(function(message){
             success(message);
         }, function(error){
             error(error);
-        },"OurMusicPlugin", "play", [uri]);
-    },
+        },"OurMusicPlugin", "play", [uri,time,token]);
+    },a
     pause : function(success, error) {
 	cordova.exec(function(message){
             success(message);
