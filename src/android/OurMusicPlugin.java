@@ -60,7 +60,7 @@ public class OurMusicPlugin extends CordovaPlugin
 	try{
 	    player.pause();
 	} catch (Exception e) {
-	    playStopCallback.error(e.getMessage());
+	    errorCallback(playStopCallback,e.getMessage());
 	}
     }
 
@@ -75,7 +75,7 @@ public class OurMusicPlugin extends CordovaPlugin
 		player.play(args.getString(0));
 		long positionInMs = args.getLong(1);
 	    } catch (Exception e) {
-	        playStopCallback.error(e.getMessage());
+	        errorCallback(playStopCallback,e.getMessage());
 	    }
 	    Log.i("OurMusicPlugin-play", "mandou tocar");
 	}
@@ -102,7 +102,7 @@ public class OurMusicPlugin extends CordovaPlugin
 	    try{
 		player.login(token);
 	    } catch (Exception e) {
-		playStopCallback.error(e.getMessage());
+		errorCallback(playStopCallback,e.getMessage());
 	    }
 	}
     }
@@ -129,7 +129,7 @@ public class OurMusicPlugin extends CordovaPlugin
 		public void onError(Throwable throwable) {
 		    String error = "Could not initialize player: " + throwable.getMessage();
 		    Log.e("OurMusicPlugin", error);
-		    callback.error(PLAYER_LOGIN_ERROR);
+		    errorCallback(callback, PLAYER_LOGIN_ERROR);
 		}
 	    });
     }
@@ -151,24 +151,24 @@ public class OurMusicPlugin extends CordovaPlugin
                         toast.show();
 
 			initializePlayerIfNeeded(response.getAccessToken(),loginCallback);
-			loginCallback.success(response.getAccessToken());
+			successCallback(loginCallback,response.getAccessToken());
                         return;
                     }
                 } else {
                     error = "Login failed: bad result from activity";
                     Log.e("OurMusicPlugin", error);
-                    OurMusicPlugin.this.loginCallback.error(SPOTIFY_LOGIN_ERROR);
+                    errorCallback(OurMusicPlugin.this.loginCallback,SPOTIFY_LOGIN_ERROR);
                 }
                 break;
             case REQUEST_CODE_LOGIN_LAUNCH:
                 error = "Login failed: bad result from Spotify";
                 Log.e("OurMusicPlugin", error);
-                OurMusicPlugin.this.loginCallback.error(SPOTIFY_LOGIN_ERROR);
+                errorCallback(OurMusicPlugin.this.loginCallback,SPOTIFY_LOGIN_ERROR);
                 break;
             default:
                 error = "Login failed: unknown reason";
                 Log.e("OurMusicPlugin", error);
-                OurMusicPlugin.this.loginCallback.error(SPOTIFY_LOGIN_ERROR);
+                errorCallback(OurMusicPlugin.this.loginCallback,SPOTIFY_LOGIN_ERROR);
                 break;
         }
     }
@@ -187,9 +187,9 @@ public class OurMusicPlugin extends CordovaPlugin
     public void onLoginFailed(Throwable throwable) {
 	Log.d("OurMusicPlugin", "Login failed");
 	if(playStopCallback != null){
-	    playStopCallback.error(PLAYER_LOGIN_ERROR);
+	    errorCallback(playStopCallback,PLAYER_LOGIN_ERROR);
 	} else if( loginCallback != null){
-	    loginCallback.error(PLAYER_LOGIN_ERROR);
+	    errorCallback(loginCallback,PLAYER_LOGIN_ERROR);
 	}
     }
 
@@ -215,10 +215,16 @@ public class OurMusicPlugin extends CordovaPlugin
 	callback.sendPluginResult(pluginResult);
     }
 
+    private void errorCallback(CallbackContext callback, String message){
+	PluginResult pluginResult = new PluginResult(PluginResult.Status.ERROR, message);
+	pluginResult.setKeepCallback(true);
+	callback.sendPluginResult(pluginResult);
+    }
+
     @Override
     public void onPlaybackError(ErrorType errorType, String message) {
         Log.d("MainActivity", "Playback error received: " + errorType.name());
-	playStopCallback.error(errorType.toString());
+	errorCallback(playStopCallback, erroType.toString());
     }
 
     @Override
