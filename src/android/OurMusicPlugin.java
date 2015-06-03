@@ -62,6 +62,7 @@ public class OurMusicPlugin extends CordovaPlugin
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         switch (requestCode) {
+            String error;
             case REQUEST_CODE_LOGIN_DELEGATE:
                 if ( resultCode == Activity.RESULT_OK ) {
                     AuthenticationResponse response = (AuthenticationResponse) intent.getParcelableExtra("response");
@@ -107,17 +108,17 @@ public class OurMusicPlugin extends CordovaPlugin
                         return;
                     }
                 }
-                String error = "Login failed: bad result from activity";
+                error = "Login failed: bad result from activity";
                 Log.e("OurMusicPlugin", error);
                 OurMusicPlugin.this.callback.error("OurMusicPlugin: " + error);
                 break;
             case REQUEST_CODE_LOGIN_LAUNCH:
-                String error = "Login failed: bad result from Spotify";
+                error = "Login failed: bad result from Spotify";
                 Log.e("OurMusicPlugin", error);
                 OurMusicPlugin.this.callback.error("OurMusicPlugin: " + error);
                 break;
             default:
-                String error = "Login failed: unknown reason";
+                error = "Login failed: unknown reason";
                 Log.e("OurMusicPlugin", error);
                 OurMusicPlugin.this.callback.error("OurMusicPlugin: " + error);
                 break;
