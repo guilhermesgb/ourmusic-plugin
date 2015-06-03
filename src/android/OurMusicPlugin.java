@@ -23,7 +23,7 @@ import org.json.JSONException;
 
 
 public class OurMusicPlugin extends CordovaPlugin
-      implements ConnectionStateCallback, PlayerNotificationCallback {
+        implements ConnectionStateCallback, PlayerNotificationCallback {
 
     protected static final int REQUEST_CODE_LOGIN_DELEGATE = 19204192;
     protected static final int REQUEST_CODE_LOGIN_LAUNCH = 20315203;
@@ -35,7 +35,7 @@ public class OurMusicPlugin extends CordovaPlugin
 
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callback)
-          throws JSONException {
+            throws JSONException {
         if ( "login".equals(action) ){
             loginToSpotify(callback);
             return true;
@@ -49,7 +49,7 @@ public class OurMusicPlugin extends CordovaPlugin
             public void run() {
                 Context context = cordova.getActivity().getApplicationContext();
                 Toast toast = Toast.makeText(context, "OurMusicPlugin: " +
-                    "Will prompt Login to Spotify!", Toast.LENGTH_LONG);
+                        "Will prompt Login to Spotify!", Toast.LENGTH_LONG);
                 toast.show();
                 Log.i("OurMusicPlugin", "Will prompt Login to Spotify!");
                 OurMusicPlugin.this.callback = callback;
@@ -71,7 +71,7 @@ public class OurMusicPlugin extends CordovaPlugin
                         String message = "User authenticated to Spotify!";
                         Log.i("OurMusicPlugin", message);
                         Toast toast = Toast.makeText(context,
-                            "OurMusicPlugin: " + message, Toast.LENGTH_LONG);
+                                "OurMusicPlugin: " + message, Toast.LENGTH_LONG);
                         toast.show();
 
                         try {
@@ -104,13 +104,12 @@ public class OurMusicPlugin extends CordovaPlugin
                                 OurMusicPlugin.this.callback.error("OurMusicPlugin: " + error);
                             }
                         });
+                        return;
                     }
                 }
-                else{
-                    String error = "Login failed: bad result from activity";
-                    Log.e("OurMusicPlugin", error);
-                    OurMusicPlugin.this.callback.error("OurMusicPlugin: " + error);
-                }
+                String error = "Login failed: bad result from activity";
+                Log.e("OurMusicPlugin", error);
+                OurMusicPlugin.this.callback.error("OurMusicPlugin: " + error);
                 break;
             case REQUEST_CODE_LOGIN_LAUNCH:
                 String error = "Login failed: bad result from Spotify";
@@ -118,6 +117,9 @@ public class OurMusicPlugin extends CordovaPlugin
                 OurMusicPlugin.this.callback.error("OurMusicPlugin: " + error);
                 break;
             default:
+                String error = "Login failed: unknown reason";
+                Log.e("OurMusicPlugin", error);
+                OurMusicPlugin.this.callback.error("OurMusicPlugin: " + error);
                 break;
         }
     }
