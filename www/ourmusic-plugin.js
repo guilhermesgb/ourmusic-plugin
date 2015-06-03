@@ -12,7 +12,7 @@ module.exports = {
         }, function(error){
             error(error);
         },"OurMusicPlugin", "play", [uri,time,token]);
-    },a
+    },
     pause : function(success, error) {
 	cordova.exec(function(message){
             success(message);
