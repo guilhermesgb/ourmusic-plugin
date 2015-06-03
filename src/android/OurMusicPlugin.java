@@ -25,12 +25,14 @@ import java.lang.Exception;
 
 
 public class OurMusicPlugin extends CordovaPlugin
-      implements ConnectionStateCallback, PlayerNotificationCallback {
+        implements ConnectionStateCallback, PlayerNotificationCallback {
 
     protected static final int REQUEST_CODE_LOGIN_DELEGATE = 19204192;
     protected static final int REQUEST_CODE_LOGIN_LAUNCH = 20315203;
     protected static final String CLIENT_ID = "1ad1195a59f646e3a38b656332897055";
     protected static final String REDIRECT_URI = "ourmusic://spotify-callback/";
+    protected static final String SPOTIFY_LOGIN_ERROR = "SPOTIFY_LOGIN_ERROR";
+    protected static final String PLAYER_LOGIN_ERROR = "PLAYER_LOGIN_ERROR";
 
     private Player player;
     private CallbackContext loginCallback;
@@ -38,27 +40,42 @@ public class OurMusicPlugin extends CordovaPlugin
 
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callback)
-          throws JSONException {
-        if ( "login".equals(action) ){
+            throws JSONException {
+	switch (action) {
+	case "login":
             loginToSpotify(callback);
             return true;
-        }
-	if ( "play".equals(action) ){
+	case "play":
             playSong(args,callback);
             return true;
-        }
-	
-        return false;
+        case "stop":
+	    stopSong(callback);
+	    return false;
+	}
+    }
+
+    private void stopSong(CallbackContext callback){
+	this.playStopCallback = callback;
+	try{
+	    player.stop();
+	} catch (Exception e) {
+	    playStopCallback.error(e.getMessage());
+	}
     }
 
     private void playSong(JSONArray args, final CallbackContext callback) {
-	OurMusicPlugin.this.playStopCallback = callback;
-	try{
-	    player.play(args.getString(0));
-	} catch (Exception e) {
-	    OurMusicPlugin.this.playStopCallback.error(e.getMessage());
+	this.playStopCallback = callback;
+	initializePlayerIfNeeded(args.getString(2),callback);
+	loginToPlayerIfNeeded(args.getString(2),callback);
+	if( player != null){
+	    try{
+		player.play(args.getString(0));
+		long positionInMs = args.getString(1);
+	    } catch (Exception e) {
+	        playStopCallback.error(e.getMessage());
+	    }
+	    Log.i("OurMusicPlugin-play", "mandou tocar");
 	}
-	Log.i("OurMusicPlugin-play", "mandou tocar");
     }
 
     private void loginToSpotify(final CallbackContext callback) {
@@ -67,7 +84,7 @@ public class OurMusicPlugin extends CordovaPlugin
             public void run() {
                 Context context = cordova.getActivity().getApplicationContext();
                 Toast toast = Toast.makeText(context, "OurMusicPlugin: " +
-                    "Will prompt Login to Spotify!", Toast.LENGTH_LONG);
+                        "Will prompt Login to Spotify!", Toast.LENGTH_LONG);
                 toast.show();
                 Log.i("OurMusicPlugin", "Will prompt Login to Spotify!");
                 OurMusicPlugin.this.loginCallback = callback;
@@ -77,8 +94,46 @@ public class OurMusicPlugin extends CordovaPlugin
         });
     }
 
+    private void loginToPlayerIfNeeded(String token){
+	if(player != null && ! player.isLoggedIn()){
+	    try{
+		player.login(token);
+	    } catch (Exception e) {
+		playStopCallback.error(e.getMessage());
+	    }
+	}
+    }
+
+    private void initializePlayerIfNeeded(String token, final CallbackContext callback){
+	if (player != null) return;
+	final Context context = cordova.getActivity().getApplicationContext();	
+	Config playerConfig = new Config(context, token, CLIENT_ID);
+	player = Spotify.getPlayer(playerConfig, this, new Player.InitializationObserver() {
+		@Override
+		public void onInitialized(Player player) {
+		    player.addConnectionStateCallback(OurMusicPlugin.this);
+
+		    String message = "Player initialized!";
+		    Log.i("OurMusicPlugin", message);
+		    Toast toast = Toast.makeText(context,
+						 "OurMusicPlugin: " + message, Toast.LENGTH_LONG);
+		    toast.show();
+                                
+		    player.addPlayerNotificationCallback(OurMusicPlugin.this);
+		}
+
+		@Override
+		public void onError(Throwable throwable) {
+		    String error = "Could not initialize player: " + throwable.getMessage();
+		    Log.e("OurMusicPlugin", error);
+		    callback.error(PLAYER_LOGIN_ERROR);
+		}
+	    });
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        String error;
         switch (requestCode) {
             case REQUEST_CODE_LOGIN_DELEGATE:
                 if ( resultCode == Activity.RESULT_OK ) {
@@ -89,46 +144,27 @@ public class OurMusicPlugin extends CordovaPlugin
                         String message = "User authenticated to Spotify!";
                         Log.i("OurMusicPlugin", message);
                         Toast toast = Toast.makeText(context,
-                            "OurMusicPlugin: " + message, Toast.LENGTH_LONG);
+                                "OurMusicPlugin: " + message, Toast.LENGTH_LONG);
                         toast.show();
 
-                        Config playerConfig = new Config(context, response.getAccessToken(), CLIENT_ID);
-                        player = Spotify.getPlayer(playerConfig, this, new Player.InitializationObserver() {
-                            @Override
-                            public void onInitialized(Player player) {
-                                player.addConnectionStateCallback(OurMusicPlugin.this);
-
-                                String message = "Player initialized!";
-                                Log.i("OurMusicPlugin", message);
-                                Toast toast = Toast.makeText(context,
-                                        "OurMusicPlugin: " + message, Toast.LENGTH_LONG);
-                                toast.show();
-                                
-                                player.addPlayerNotificationCallback(OurMusicPlugin.this);
-				OurMusicPlugin.this.loginCallback.success(response.getAccessToken());
-                            }
-
-                            @Override
-                            public void onError(Throwable throwable) {
-                                String error = "Could not initialize player: " + throwable.getMessage();
-                                Log.e("OurMusicPlugin", error);
-                                OurMusicPlugin.this.loginCallback.error("OurMusicPlugin: " + error);
-                            }
-                        });
+			initializePlayerIfNeeded(response.getAccessToken(),OurMusicPlugin.this.loginCallback);
+                        return;
                     }
-                }
-                else{
+                } else {
                     String error = "Login failed: bad result from activity";
                     Log.e("OurMusicPlugin", error);
-                    OurMusicPlugin.this.loginCallback.error("OurMusicPlugin: " + error);
+                    OurMusicPlugin.this.loginCallback.error(SPOTIFY_LOGIN_ERROR);
                 }
                 break;
             case REQUEST_CODE_LOGIN_LAUNCH:
-                String error = "Login failed: bad result from Spotify";
+                error = "Login failed: bad result from Spotify";
                 Log.e("OurMusicPlugin", error);
-                OurMusicPlugin.this.loginCallback.error("OurMusicPlugin: " + error);
+                OurMusicPlugin.this.loginCallback.error(SPOTIFY_LOGIN_ERROR);
                 break;
             default:
+                error = "Login failed: unknown reason";
+                Log.e("OurMusicPlugin", error);
+                OurMusicPlugin.this.callback.error(SPOTIFY_LOGIN_ERROR);
                 break;
         }
     }
@@ -145,7 +181,12 @@ public class OurMusicPlugin extends CordovaPlugin
 
     @Override
     public void onLoginFailed(Throwable throwable) {
-        Log.d("OurMusicPlugin", "Login failed");
+	Log.d("OurMusicPlugin", "Login failed");
+	if(playStopCallback != null){
+	    playStopCallback.error(PLAYER_LOGIN_ERROR);
+	} else if( loginCallback != null){
+	    loginCallback.error(PLAYER_LOGIN_ERROR);
+	}
     }
 
     @Override

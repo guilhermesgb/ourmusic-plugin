@@ -33,24 +33,18 @@ public class LoginActivity extends Activity {
 
     @Override
     protected void onNewIntent(Intent intent) {
-	super.onNewIntent(intent);
-    
-	Uri uri = intent.getData();
-	if (uri != null) {
-	    AuthenticationResponse response = AuthenticationResponse.fromUri(uri);
-	    Intent response_intent = new Intent();
-	    switch (response.getType()) {
-            case TOKEN:
-		response_intent.putExtra("response",response);
-		setResult(Activity.RESULT_OK, response_intent);
-		finish();
-                break;
-            default:
-		response_intent.putExtra("response",response);
-		setResult(Activity.RESULT_OK, response_intent);
-		finish();
-		break;
-	    }
-	}
+        super.onNewIntent(intent);
+
+        Uri uri = intent.getData();
+        if (uri != null) {
+            AuthenticationResponse response = AuthenticationResponse.fromUri(uri);
+            Intent responseIntent = new Intent();
+            responseIntent.putExtra("response", response);
+            setResult(Activity.RESULT_OK, responseIntent);
+            finish();
+            return;
+        }
+        setResult(Activity.RESULT_CANCELED, intent);
+        finish();
     }
 }
