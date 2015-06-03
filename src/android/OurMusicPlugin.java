@@ -224,7 +224,7 @@ public class OurMusicPlugin extends CordovaPlugin
     @Override
     public void onPlaybackError(ErrorType errorType, String message) {
         Log.d("MainActivity", "Playback error received: " + errorType.name());
-	errorCallback(playStopCallback, erroType.toString());
+	errorCallback(playStopCallback, errorType.toString());
     }
 
     @Override
