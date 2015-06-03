@@ -31,7 +31,8 @@ public class OurMusicPlugin extends CordovaPlugin
     protected static final String REDIRECT_URI = "ourmusic://spotify-callback/";
 
     private Player player;
-    private CallbackContext callback;
+    private CallbackContext loginCallback;
+    private CallbackContext playStopCallback;
 
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callback)
@@ -40,7 +41,18 @@ public class OurMusicPlugin extends CordovaPlugin
             loginToSpotify(callback);
             return true;
         }
+	if ( "play".equals(action) ){
+            playSong(args,callback);
+            return true;
+        }
+	
         return false;
+    }
+
+    private void playSong(JSONArray args, final CallbackContext callback) {
+	OurMusicPlugin.this.playCallback = callback;
+	player.play(args.getString(0));
+	Log.i("OurMusicPlugin-play", "mandou tocar");
     }
 
     private void loginToSpotify(final CallbackContext callback) {
@@ -52,7 +64,7 @@ public class OurMusicPlugin extends CordovaPlugin
                     "Will prompt Login to Spotify!", Toast.LENGTH_LONG);
                 toast.show();
                 Log.i("OurMusicPlugin", "Will prompt Login to Spotify!");
-                OurMusicPlugin.this.callback = callback;
+                OurMusicPlugin.this.loginCallback = callback;
                 Intent intent = new Intent(context, LoginActivity.class);
                 cordova.startActivityForResult(OurMusicPlugin.this, intent, REQUEST_CODE_LOGIN_DELEGATE);
             }
@@ -74,12 +86,6 @@ public class OurMusicPlugin extends CordovaPlugin
                             "OurMusicPlugin: " + message, Toast.LENGTH_LONG);
                         toast.show();
 
-                        try {
-                            Thread.sleep(5000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-
                         Config playerConfig = new Config(context, response.getAccessToken(), CLIENT_ID);
                         player = Spotify.getPlayer(playerConfig, this, new Player.InitializationObserver() {
                             @Override
@@ -91,17 +97,16 @@ public class OurMusicPlugin extends CordovaPlugin
                                 Toast toast = Toast.makeText(context,
                                         "OurMusicPlugin: " + message, Toast.LENGTH_LONG);
                                 toast.show();
-                                OurMusicPlugin.this.callback.success("OurMusicPlugin: " + message);
-
+                                
                                 player.addPlayerNotificationCallback(OurMusicPlugin.this);
-                                player.play("spotify:track:2TpxZ7JUBn3uw46aR7qd6V");
+				OurMusicPlugin.this.longinCallback.success(response.getAccessToken());
                             }
 
                             @Override
                             public void onError(Throwable throwable) {
                                 String error = "Could not initialize player: " + throwable.getMessage();
                                 Log.e("OurMusicPlugin", error);
-                                OurMusicPlugin.this.callback.error("OurMusicPlugin: " + error);
+                                OurMusicPlugin.this.loginCallback.error("OurMusicPlugin: " + error);
                             }
                         });
                     }
@@ -109,13 +114,13 @@ public class OurMusicPlugin extends CordovaPlugin
                 else{
                     String error = "Login failed: bad result from activity";
                     Log.e("OurMusicPlugin", error);
-                    OurMusicPlugin.this.callback.error("OurMusicPlugin: " + error);
+                    OurMusicPlugin.this.loginCallback.error("OurMusicPlugin: " + error);
                 }
                 break;
             case REQUEST_CODE_LOGIN_LAUNCH:
                 String error = "Login failed: bad result from Spotify";
                 Log.e("OurMusicPlugin", error);
-                OurMusicPlugin.this.callback.error("OurMusicPlugin: " + error);
+                OurMusicPlugin.this.loginCallback.error("OurMusicPlugin: " + error);
                 break;
             default:
                 break;
