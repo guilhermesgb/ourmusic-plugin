@@ -7,7 +7,7 @@ module.exports = {
             console.log(error);
             error(error);
         },"OurMusicPlugin", "login", []);
-    }
+    },
     play : function(uri,success, error) {
 	cordova.exec(function(message){
             console.log(message);
