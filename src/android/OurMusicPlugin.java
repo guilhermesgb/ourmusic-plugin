@@ -50,7 +50,7 @@ public class OurMusicPlugin extends CordovaPlugin
     }
 
     private void playSong(JSONArray args, final CallbackContext callback) {
-	OurMusicPlugin.this.playCallback = callback;
+	OurMusicPlugin.this.playStopCallback = callback;
 	player.play(args.getString(0));
 	Log.i("OurMusicPlugin-play", "mandou tocar");
     }
@@ -76,7 +76,7 @@ public class OurMusicPlugin extends CordovaPlugin
         switch (requestCode) {
             case REQUEST_CODE_LOGIN_DELEGATE:
                 if ( resultCode == Activity.RESULT_OK ) {
-                    AuthenticationResponse response = (AuthenticationResponse) intent.getParcelableExtra("response");
+                    final AuthenticationResponse response = (AuthenticationResponse) intent.getParcelableExtra("response");
                     if ( response.getType() == AuthenticationResponse.Type.TOKEN ) {
                         final Context context = cordova.getActivity().getApplicationContext();
 
@@ -99,7 +99,7 @@ public class OurMusicPlugin extends CordovaPlugin
                                 toast.show();
                                 
                                 player.addPlayerNotificationCallback(OurMusicPlugin.this);
-				OurMusicPlugin.this.longinCallback.success(response.getAccessToken());
+				OurMusicPlugin.this.loginCallback.success(response.getAccessToken());
                             }
 
                             @Override
