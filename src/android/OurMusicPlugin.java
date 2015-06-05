@@ -262,7 +262,7 @@ public class OurMusicPlugin extends CordovaPlugin
     private JsonObject playerStateToJsonObject(PlayerState state){
 	JsonObject json = new JsonObject();
 	json.put("playing",state.playing);
-	json.put("durationInMs"state.durationInMs);
+	json.put("durationInMs",state.durationInMs);
 	json.put("trackUri",state.trackUri);
 	return json;
     }
@@ -276,7 +276,7 @@ public class OurMusicPlugin extends CordovaPlugin
 			try {
 			    player.getPlayerState(new PlayerStateCallback() {
 				    @Override
-				    onPlayerState(PlayerState state){
+				    public void onPlayerState(PlayerState state){
 					OurMusicPlugin.this.playerState = state;
 					successCallback(OurMusicPlugin.this.payStopCallback,playerStateToJsonObject(state));
 				    }
