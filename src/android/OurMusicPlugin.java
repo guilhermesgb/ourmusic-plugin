@@ -8,7 +8,7 @@ import android.widget.Toast;
 
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
-import com.spotify.sdk.android.playback.PlayerStateCallback;
+import com.spotify.sdk.android.player.PlayerStateCallback;
 import com.spotify.sdk.android.player.Config;
 import com.spotify.sdk.android.player.ConnectionStateCallback;
 import com.spotify.sdk.android.player.Player;
@@ -21,6 +21,7 @@ import org.apache.cordova.CordovaInterface;
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
+import org.json.JSONObject;
 import org.json.JSONException;
 
 import java.lang.Exception;
@@ -79,9 +80,9 @@ public class OurMusicPlugin extends CordovaPlugin
 	    try{
 		int positionInMs = args.getInt(1);
 		String trackUri = args.getString(0);
-		if( trackUri.equals(playState.trackUri) 
-		    && Math.abs(positionInMs - playState.positionInMs) <= 2 * CALLBACK_INTERVAL
-		    && !playState.playing){
+		if( trackUri.equals(playerState.trackUri) 
+		    && Math.abs(positionInMs - playerState.positionInMs) <= 2 * CALLBACK_INTERVAL
+		    && !playerState.playing){
 		    player.resume();
 		} else {
 		    player.play(trackUri);
