@@ -45,6 +45,7 @@ public class OurMusicPlugin extends CordovaPlugin
     private CallbackContext playStopCallback;
     private PlayerState playerState;
 
+    // Functions
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callback)
             throws JSONException {
@@ -279,7 +280,8 @@ public class OurMusicPlugin extends CordovaPlugin
 				    @Override
 				    public void onPlayerState(PlayerState state){
 					OurMusicPlugin.this.playerState = state;
-					successCallback(OurMusicPlugin.this.payStopCallback,playerStateToJsonObject(state));
+					OurMusicPlugin.this.successCallback(OurMusicPlugin.this.payStopCallback,
+								       OurMusicPlugin.this.playerStateToJsonObject(state));
 				    }
 				});
 			    Thread.sleep(CALLBACK_INTERVAL);
