@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
+import com.spotify.sdk.android.playback.PlayerStateCallback;
 import com.spotify.sdk.android.player.Config;
 import com.spotify.sdk.android.player.ConnectionStateCallback;
 import com.spotify.sdk.android.player.Player;
@@ -23,6 +24,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.lang.Exception;
+import java.lang.Math;
 
 
 public class OurMusicPlugin extends CordovaPlugin
@@ -34,10 +36,13 @@ public class OurMusicPlugin extends CordovaPlugin
     protected static final String REDIRECT_URI = "ourmusic://spotify-callback/";
     protected static final String SPOTIFY_LOGIN_ERROR = "SPOTIFY_LOGIN_ERROR";
     protected static final String PLAYER_LOGIN_ERROR = "PLAYER_LOGIN_ERROR";
+    protected static final String EVENT = "event";
+    protected static final int CALLBACK_INTERVAL = 1000;
 
     private Player player;
     private CallbackContext loginCallback;
     private CallbackContext playStopCallback;
+    private PlayerState playerState;
 
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callback)
@@ -72,8 +77,17 @@ public class OurMusicPlugin extends CordovaPlugin
 	} catch(Exception e){}
 	if( player != null){
 	    try{
-		player.play(args.getString(0));
-		long positionInMs = args.getLong(1);
+		int positionInMs = args.getInt(1);
+		String trackUri = args.getString(0);
+		if( trackUri.equals(playState.trackUri) 
+		    && Math.abs(positionInMs - playState.positionInMs) <= 2 * CALLBACK_INTERVAL
+		    && !playState.playing){
+		    player.resume();
+		} else {
+		    player.play(trackUri);
+		    player.seekToPosition(positionInMs);
+		}
+		
 	    } catch (Exception e) {
 	        errorCallback(playStopCallback,e.getMessage());
 	    }
@@ -206,11 +220,29 @@ public class OurMusicPlugin extends CordovaPlugin
     @Override
     public void onPlaybackEvent(EventType eventType, PlayerState playerState) {
         Log.d("OurMusicPlugin", "Playback event received: " + eventType.name());
-	successCallback(playStopCallback,eventType.toString());
+
+	boolean startedToPlay = false;
+	if ( playerState.playing && !this.playerState.playing){
+	    startedToPlay = true;
+	}
+	this.playerState = playerState;
+	if ( startedToPlay ){
+	    runPlayerStateUpdater();
+	}
+	
+	JsonObject json = playerStateToJsonObject(this.playerState);
+	json.put(EVENT,eventType.toString());
+	successCallback(playStopCallback,json);
     }
 
     private void successCallback(CallbackContext callback, String message){
 	PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, message);
+	pluginResult.setKeepCallback(true);
+	callback.sendPluginResult(pluginResult);
+    }
+
+    private void successCallback(CallbackContext callback, JsonObject json){
+	PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, json);
 	pluginResult.setKeepCallback(true);
 	callback.sendPluginResult(pluginResult);
     }
@@ -225,6 +257,37 @@ public class OurMusicPlugin extends CordovaPlugin
     public void onPlaybackError(ErrorType errorType, String message) {
         Log.d("MainActivity", "Playback error received: " + errorType.name());
 	errorCallback(playStopCallback, errorType.toString());
+    }
+
+    private JsonObject playerStateToJsonObject(PlayerState state){
+	JsonObject json = new JsonObject();
+	json.put("playing",state.playing);
+	json.put("durationInMs"state.durationInMs);
+	json.put("trackUri",state.trackUri);
+	return json;
+    }
+    
+    private runPlayerStateUpdater(){
+	cordova.getThreadPool().execute(new Runnable() {
+		public void run() {
+		    Player player = OurMusicPlugin.this.player;
+		    while (player != null && OurMusicPlugin.this.playerState != null
+			   && OurMusicPlugin.this.playerState.playing) {
+			try {
+			    player.getPlayerState(new PlayerStateCallback() {
+				    @Override
+				    onPlayerState(PlayerState state){
+					OurMusicPlugin.this.playerState = state;
+					successCallback(OurMusicPlugin.this.payStopCallback,playerStateToJsonObject(state));
+				    }
+				});
+			    Thread.sleep(CALLBACK_INTERVAL);
+			} catch (Exception e){
+			    Log.d("OurMusicPlugin - runPlayerStateUpdater",e.getMessage());
+			}
+		    }
+		}
+	    });
     }
 
     @Override
