@@ -280,7 +280,7 @@ public class OurMusicPlugin extends CordovaPlugin
 				    @Override
 				    public void onPlayerState(PlayerState state){
 					OurMusicPlugin.this.playerState = state;
-					OurMusicPlugin.this.successCallback(OurMusicPlugin.this.payStopCallback,
+					OurMusicPlugin.this.successCallback(OurMusicPlugin.this.playStopCallback,
 								       OurMusicPlugin.this.playerStateToJsonObject(state));
 				    }
 				});
