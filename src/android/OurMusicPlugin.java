@@ -267,7 +267,7 @@ public class OurMusicPlugin extends CordovaPlugin
 	return json;
     }
     
-    private runPlayerStateUpdater(){
+    private void runPlayerStateUpdater(){
 	cordova.getThreadPool().execute(new Runnable() {
 		public void run() {
 		    Player player = OurMusicPlugin.this.player;
