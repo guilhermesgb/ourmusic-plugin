@@ -81,7 +81,7 @@ public class OurMusicPlugin extends CordovaPlugin
 	    try{
 		int positionInMs = args.getInt(1);
 		String trackUri = args.getString(0);
-		if( trackUri.equals(playerState.trackUri) 
+		if( playerState != null && trackUri.equals(playerState.trackUri) 
 		    && Math.abs(positionInMs - playerState.positionInMs) <= 2 * CALLBACK_INTERVAL
 		    && !playerState.playing){
 		    player.resume();
