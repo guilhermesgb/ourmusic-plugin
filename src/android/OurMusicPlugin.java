@@ -45,7 +45,17 @@ public class OurMusicPlugin extends CordovaPlugin
     private CallbackContext playStopCallback;
     private PlayerState playerState;
 
-    // Functions
+    // Plugin functions:
+    // 1 - login
+    //   Opens a new LoginActivity and waits for an auth_token in the result.
+    //   * receives no args
+    //   * runs a success callback with the authentication token as plain text
+    // 2 - play
+    //   * args: trackUri, positionInMs and auth_token respectively
+    //   * when playing, constantly runs a success callback passing the current player state as argument
+    //   * when a event happens in the player, runs a success callback passing the current player state and the event type as argument
+    // 3 - stop
+    //   * receives no args
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callback)
             throws JSONException {
