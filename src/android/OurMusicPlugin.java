@@ -89,7 +89,6 @@ public class OurMusicPlugin extends CordovaPlugin
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        String error;
         switch (requestCode) {
             case REQUEST_CODE_LOGIN_DELEGATE:
                 if (resultCode == Activity.RESULT_OK) {
