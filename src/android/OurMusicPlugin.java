@@ -128,6 +128,7 @@ public class OurMusicPlugin extends CordovaPlugin
 
     @Override
     public void onLoginFailed(Throwable throwable) {
+        Context context = cordova.getActivity().getApplicationContext();
         String error = "Could not login to Spotify!";
         Toast.makeText(context, "OurMusicPlugin: " + error, Toast.LENGTH_LONG).show();
         Log.e("OurMusicPlugin", error);
@@ -159,6 +160,7 @@ public class OurMusicPlugin extends CordovaPlugin
 
     private void loginToPlayerIfNeeded(String token) {
         if (player != null && !player.isLoggedIn()) {
+            Context context = cordova.getActivity().getApplicationContext();
             try {
                 player.login(token);
                 String message = "Player logged in!";
@@ -179,12 +181,14 @@ public class OurMusicPlugin extends CordovaPlugin
             initializePlayerIfNeeded(args.getString(2));
             loginToPlayerIfNeeded(args.getString(2));
         } catch(Exception e){
+            Context context = cordova.getActivity().getApplicationContext();
             String error = "Could not initialize Player due to problems with the arguments";
             Toast.makeText(context, "OurMusicPlugin: " + error, Toast.LENGTH_LONG).show();
             Log.e("OurMusicPlugin", error);
             errorCallback(playStopCallback, e.getMessage());
         }
         if (player != null) {
+            Context context = cordova.getActivity().getApplicationContext();
             try {
                 int positionInMs = args.getInt(1);
                 String trackUri = args.getString(0);
@@ -213,6 +217,7 @@ public class OurMusicPlugin extends CordovaPlugin
 
     private void stopSong(CallbackContext callback) {
         this.playStopCallback = callback;
+        Context context = cordova.getActivity().getApplicationContext();
         try {
             player.pause();
             String message = "Commanded Player to pause a song!";
@@ -258,6 +263,7 @@ public class OurMusicPlugin extends CordovaPlugin
 
     @Override
     public void onPlaybackError(ErrorType errorType, String message) {
+        Context context = cordova.getActivity().getApplicationContext();
         String error = "Playback error received: " + errorType.name() + "; " + message;
         Toast.makeText(context, "OurMusicPlugin: " + error, Toast.LENGTH_LONG).show();
         Log.e("OurMusicPlugin", error);
