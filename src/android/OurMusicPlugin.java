@@ -12,6 +12,7 @@ import com.spotify.sdk.android.player.PlayerStateCallback;
 import com.spotify.sdk.android.player.Config;
 import com.spotify.sdk.android.player.ConnectionStateCallback;
 import com.spotify.sdk.android.player.Player;
+import com.spotify.sdk.android.player.PlayConfig;
 import com.spotify.sdk.android.player.PlayerNotificationCallback;
 import com.spotify.sdk.android.player.PlayerState;
 import com.spotify.sdk.android.player.Spotify;
@@ -200,8 +201,9 @@ public class OurMusicPlugin extends CordovaPlugin
                     Toast.makeText(context, "OurMusicPlugin: " + message, Toast.LENGTH_LONG).show();
                     Log.i("OurMusicPlugin", message);
                 } else {
-                    player.play(trackUri);
-                    player.seekToPosition(positionInMs);
+                    PlayConfig config = PlayConfig.createFor(trackUri);
+                    config.withInitialPosition(positionInMs);
+                    player.play(config);
                     String message = "Commanded Player to play a song (seeking to pos " +
                         positionInMs + ")!";
                     Toast.makeText(context, "OurMusicPlugin: " + message, Toast.LENGTH_LONG).show();
