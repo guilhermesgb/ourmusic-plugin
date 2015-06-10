@@ -1,23 +1,23 @@
 module.exports = {
-    login : function(success, error) {
-	cordova.exec(function(message){
+    login: function(success, error) {
+	cordova.exec(function(message) {
             success(message);
-        }, function(error){
+        }, function(error) {
             error(error);
-        },"OurMusicPlugin", "login", []);
+        }, "OurMusicPlugin", "login", []);
     },
-    play : function(uri, time, token, success, error) {
-	cordova.exec(function(message){
-            success(message);
-        }, function(error){
+    play: function(trackUri, position, token, success, error) {
+	cordova.exec(function(playerState) {
+            success(playerState);
+        }, function(error) {
             error(error);
-        },"OurMusicPlugin", "play", [uri, time, token]);
+        }, "OurMusicPlugin", "play", [trackUri, position, token]);
     },
-    pause : function(success, error) {
-	cordova.exec(function(message){
-            success(message);
-        }, function(error){
+    pause: function(playerState, error) {
+	cordova.exec(function(playerState) {
+            success(playerState);
+        }, function(error) {
             error(error);
-        },"OurMusicPlugin", "pause", []);
+        }, "OurMusicPlugin", "pause", []);
     }
 };
