@@ -202,7 +202,8 @@ public class OurMusicPlugin extends CordovaPlugin
                 } else {
                     player.play(trackUri);
                     player.seekToPosition(positionInMs);
-                    String message = "Commanded Player to play a song (seeking to pos)!";
+                    String message = "Commanded Player to play a song (seeking to pos " +
+                        positionInMs + ")!";
                     Toast.makeText(context, "OurMusicPlugin: " + message, Toast.LENGTH_LONG).show();
                     Log.i("OurMusicPlugin", message);
                 }
