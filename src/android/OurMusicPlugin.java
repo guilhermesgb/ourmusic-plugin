@@ -66,7 +66,7 @@ public class OurMusicPlugin extends CordovaPlugin
             return true;
         }
         else if ("pause".equals(action)) {
-            pauseSong(callback);
+            pauseSong(args, callback);
             return true;
         }
         return false;
@@ -176,7 +176,7 @@ public class OurMusicPlugin extends CordovaPlugin
         }
     }
 
-    private void playSong(JSONArray args, final CallbackContext callback) {
+    private void playSong(JSONArray args, CallbackContext callback) {
         this.playPauseCallback = callback;
         try {
             initializePlayerIfNeeded(args.getString(2), playPauseCallback);
@@ -235,7 +235,7 @@ public class OurMusicPlugin extends CordovaPlugin
         }
     }
 
-    private void pauseSong(CallbackContext callback) {
+    private void pauseSong(JSONArray args, CallbackContext callback) {
         this.playPauseCallback = callback;
         try {
             initializePlayerIfNeeded(args.getString(0), playPauseCallback);
