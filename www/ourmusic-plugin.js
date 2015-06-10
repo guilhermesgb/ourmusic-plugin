@@ -13,11 +13,11 @@ module.exports = {
             error(error);
         }, "OurMusicPlugin", "play", [trackUri, position, token]);
     },
-    pause: function(success, error) {
+    pause: function(token, success, error) {
 	cordova.exec(function(playerState) {
             success(playerState);
         }, function(error) {
             error(error);
-        }, "OurMusicPlugin", "pause", []);
+        }, "OurMusicPlugin", "pause", [token]);
     }
 };
