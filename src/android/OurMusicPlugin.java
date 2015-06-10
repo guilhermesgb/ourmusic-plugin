@@ -299,8 +299,9 @@ public class OurMusicPlugin extends CordovaPlugin
         JSONObject json = new JSONObject();
         try {
             json.put("playing", state.playing);
-            json.put("durationInMs", state.durationInMs);
             json.put("trackUri", state.trackUri);
+            json.put("positionInMs", state.positionInMs);
+            json.put("durationInMs", state.durationInMs);
         } catch (Exception e) {}
         return json;
     }
