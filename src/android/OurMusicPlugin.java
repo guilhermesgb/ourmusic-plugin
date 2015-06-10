@@ -40,7 +40,7 @@ public class OurMusicPlugin extends CordovaPlugin
 
     private Player player;
     private CallbackContext loginCallback;
-    private CallbackContext playStopCallback;
+    private CallbackContext playPauseCallback;
     private PlayerState playerState;
 
     // Plugin functions:
@@ -65,8 +65,8 @@ public class OurMusicPlugin extends CordovaPlugin
             playSong(args, callback);
             return true;
         }
-        else if ("stop".equals(action)) {
-            stopSong(callback);
+        else if ("pause".equals(action)) {
+            pauseSong(callback);
             return true;
         }
         return false;
@@ -171,22 +171,22 @@ public class OurMusicPlugin extends CordovaPlugin
                 String error = "Player could not login properly!";
                 Toast.makeText(context, "OurMusicPlugin: " + error, Toast.LENGTH_LONG).show();
                 Log.e("OurMusicPlugin", error);
-                errorCallback(playStopCallback, e.getMessage());
+                errorCallback(playPauseCallback, e.getMessage());
             }
         }
     }
 
     private void playSong(JSONArray args, final CallbackContext callback) {
-        this.playStopCallback = callback;
+        this.playPauseCallback = callback;
         try {
-            initializePlayerIfNeeded(args.getString(2), playStopCallback);
+            initializePlayerIfNeeded(args.getString(2), playPauseCallback);
             loginToPlayerIfNeeded(args.getString(2));
         } catch(Exception e){
             Context context = cordova.getActivity().getApplicationContext();
             String error = "Could not initialize Player due to problems with the arguments";
             Toast.makeText(context, "OurMusicPlugin: " + error, Toast.LENGTH_LONG).show();
             Log.e("OurMusicPlugin", error);
-            errorCallback(playStopCallback, e.getMessage());
+            errorCallback(playPauseCallback, e.getMessage());
         }
         if (player != null) {
             Context context = cordova.getActivity().getApplicationContext();
@@ -213,13 +213,13 @@ public class OurMusicPlugin extends CordovaPlugin
                 String error = "Player could not execute command properly!";
                 Toast.makeText(context, "OurMusicPlugin: " + error, Toast.LENGTH_LONG).show();
                 Log.e("OurMusicPlugin", error);
-                errorCallback(playStopCallback, e.getMessage());
+                errorCallback(playPauseCallback, e.getMessage());
             }
         }
     }
 
-    private void stopSong(CallbackContext callback) {
-        this.playStopCallback = callback;
+    private void pauseSong(CallbackContext callback) {
+        this.playPauseCallback = callback;
         Context context = cordova.getActivity().getApplicationContext();
         try {
             player.pause();
@@ -230,7 +230,7 @@ public class OurMusicPlugin extends CordovaPlugin
             String error = "Player could not execute command properly!";
             Toast.makeText(context, "OurMusicPlugin: " + error, Toast.LENGTH_LONG).show();
             Log.e("OurMusicPlugin", error);
-            errorCallback(playStopCallback, e.getMessage());
+            errorCallback(playPauseCallback, e.getMessage());
         }
     }
 
@@ -261,7 +261,7 @@ public class OurMusicPlugin extends CordovaPlugin
         try {
             state.put("event", eventType.toString());
         } catch (Exception e) {}
-        successCallback(playStopCallback, state);
+        successCallback(playPauseCallback, state);
     }
 
     @Override
@@ -270,7 +270,7 @@ public class OurMusicPlugin extends CordovaPlugin
         String error = "Playback error received: " + errorType.name() + "; " + message;
         Toast.makeText(context, "OurMusicPlugin: " + error, Toast.LENGTH_LONG).show();
         Log.e("OurMusicPlugin", error);
-        errorCallback(playStopCallback, errorType.toString());
+        errorCallback(playPauseCallback, errorType.toString());
     }
     
     private void runPlayerStateUpdater() {
@@ -285,7 +285,7 @@ public class OurMusicPlugin extends CordovaPlugin
                             public void onPlayerState(PlayerState state) {
                                 OurMusicPlugin.this.playerState = state;
                                 OurMusicPlugin.this.successCallback(
-                                        OurMusicPlugin.this.playStopCallback,
+                                        OurMusicPlugin.this.playPauseCallback,
                                         OurMusicPlugin.this.playerStateToJsonObject(state));
                             }
                         });
