@@ -100,6 +100,7 @@ public class OurMusicPlugin extends CordovaPlugin
                         Toast.makeText(context, "OurMusicPlugin: " + message,
                           Toast.LENGTH_LONG).show();
                         Log.i("OurMusicPlugin", message);
+                        initializePlayerIfNeeded(response.getAccessToken(), loginCallback);
                         successCallback(loginCallback, response.getAccessToken());
                         return;
                     }
@@ -134,7 +135,7 @@ public class OurMusicPlugin extends CordovaPlugin
         errorCallback(loginCallback, throwable.getMessage());
     }
 
-    private void initializePlayerIfNeeded(String token) {
+    private void initializePlayerIfNeeded(String token, final CallbackContext callback) {
         if (player != null) return;
         final Context context = cordova.getActivity().getApplicationContext();
         Config playerConfig = new Config(context, token, CLIENT_ID);
@@ -152,7 +153,7 @@ public class OurMusicPlugin extends CordovaPlugin
                 String error = "Player could not initialize properly!";
                 Toast.makeText(context, "OurMusicPlugin: " + error, Toast.LENGTH_LONG).show();
                 Log.e("OurMusicPlugin", error);
-                errorCallback(playStopCallback, throwable.getMessage());
+                errorCallback(callback, throwable.getMessage());
             }
         });
     }
@@ -177,7 +178,7 @@ public class OurMusicPlugin extends CordovaPlugin
     private void playSong(JSONArray args, final CallbackContext callback) {
         this.playStopCallback = callback;
         try {
-            initializePlayerIfNeeded(args.getString(2));
+            initializePlayerIfNeeded(args.getString(2), playStopCallback);
             loginToPlayerIfNeeded(args.getString(2));
         } catch(Exception e){
             Context context = cordova.getActivity().getApplicationContext();
