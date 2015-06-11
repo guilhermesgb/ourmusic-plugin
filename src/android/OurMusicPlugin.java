@@ -326,7 +326,7 @@ public class OurMusicPlugin extends CordovaPlugin
                             @Override
                             public void onPlayerState(PlayerState state) {
 				synchronized(OurMusicPlugin.this){
-				    if(OurMusicPlugin.this.playerState != null && OurMusicPlugin.playerState.playing){
+				    if(OurMusicPlugin.this.playerState != null && OurMusicPlugin.this.playerState.playing){
 					OurMusicPlugin.this.playerState = state;
 					OurMusicPlugin.this.successCallback(
 									    OurMusicPlugin.this.playPauseCallback,
