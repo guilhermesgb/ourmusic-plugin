@@ -294,12 +294,8 @@ public class OurMusicPlugin extends CordovaPlugin
     public void onPlaybackEvent(EventType eventType, PlayerState playerState) {
         Log.d("OurMusicPlugin", "Playback event received: " + eventType.name());
 
-        boolean startedToPlay = false;
-        if (playerState.playing && !this.playerState.playing) {
-            startedToPlay = true;
-        }
         this.playerState = playerState;
-        if (startedToPlay) {
+        if (eventType == EventType.PLAY) {
             runPlayerStateUpdater();
         }
 
