@@ -291,7 +291,7 @@ public class OurMusicPlugin extends CordovaPlugin
     }
 
     @Override
-    public void onPlaybackEvent(EventType eventType, PlayerState playerState) {
+    public synchronized void onPlaybackEvent(EventType eventType, PlayerState playerState) {
         Log.d("OurMusicPlugin", "Playback event received: " + eventType.name());
 
         this.playerState = playerState;
@@ -325,10 +325,14 @@ public class OurMusicPlugin extends CordovaPlugin
                         OurMusicPlugin.this.player.getPlayerState(new PlayerStateCallback() {
                             @Override
                             public void onPlayerState(PlayerState state) {
-                                OurMusicPlugin.this.playerState = state;
-                                OurMusicPlugin.this.successCallback(
-                                        OurMusicPlugin.this.playPauseCallback,
-                                        OurMusicPlugin.this.playerStateToJsonObject(state));
+				synchronized(OurMusicPlugin.this){
+				    if(OurMusicPlugin.this.playerState != null && OurMusicPlugin.playerState.playing){
+					OurMusicPlugin.this.playerState = state;
+					OurMusicPlugin.this.successCallback(
+									    OurMusicPlugin.this.playPauseCallback,
+									    OurMusicPlugin.this.playerStateToJsonObject(state));
+				    }
+				}
                             }
                         });
                         Thread.sleep(CALLBACK_INTERVAL);
