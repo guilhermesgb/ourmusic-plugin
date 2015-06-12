@@ -37,7 +37,7 @@ public class OurMusicPlugin extends CordovaPlugin
     protected static final String CLIENT_ID = "1ad1195a59f646e3a38b656332897055";
     protected static final String REDIRECT_URI = "ourmusic://spotify-callback/";
     protected static final int CALLBACK_INTERVAL = 1000;
-    protected static final String PLAYER_INITIALIZED_CODE = "PLAYER_INITIALIZED"
+    protected static final String PLAYER_INITIALIZED_CODE = "PLAYER_INITIALIZED";
 
     private Player player;
     private CallbackContext loginCallback;
