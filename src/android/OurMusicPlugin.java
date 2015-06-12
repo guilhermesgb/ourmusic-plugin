@@ -139,7 +139,7 @@ public class OurMusicPlugin extends CordovaPlugin
 
     private void initializePlayerIfNeeded(String token, final CallbackContext callback) {
         if (player != null) {
-	    successCallback(callback, PLAYER_INITIALIZED_CODE);
+	    successCallback(loginCallback, PLAYER_INITIALIZED_CODE);
 	    return;
 	}
         final Context context = cordova.getActivity().getApplicationContext();
@@ -152,7 +152,7 @@ public class OurMusicPlugin extends CordovaPlugin
                 String message = "Player initialized!";
                 Toast.makeText(context, "OurMusicPlugin: " + message, Toast.LENGTH_SHORT).show();
                 Log.i("OurMusicPlugin", message);
-		successCallback(callback, PLAYER_INITIALIZED_CODE);
+		successCallback(loginCallback, PLAYER_INITIALIZED_CODE);
             }
             @Override
             public void onError(Throwable throwable) {
