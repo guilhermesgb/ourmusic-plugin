@@ -37,6 +37,7 @@ public class OurMusicPlugin extends CordovaPlugin
     protected static final String CLIENT_ID = "1ad1195a59f646e3a38b656332897055";
     protected static final String REDIRECT_URI = "ourmusic://spotify-callback/";
     protected static final int CALLBACK_INTERVAL = 1000;
+    protected static final String PLAYER_INITIALIZED_CODE = "PLAYER_INITIALIZED"
 
     private Player player;
     private CallbackContext loginCallback;
@@ -137,7 +138,10 @@ public class OurMusicPlugin extends CordovaPlugin
     }
 
     private void initializePlayerIfNeeded(String token, final CallbackContext callback) {
-        if (player != null) return;
+        if (player != null) {
+	    successCallback(callback, PLAYER_INITIALIZED_CODE);
+	    return;
+	}
         final Context context = cordova.getActivity().getApplicationContext();
         Config playerConfig = new Config(context, token, CLIENT_ID);
         player = Spotify.getPlayer(playerConfig, this, new Player.InitializationObserver() {
@@ -148,6 +152,7 @@ public class OurMusicPlugin extends CordovaPlugin
                 String message = "Player initialized!";
                 Toast.makeText(context, "OurMusicPlugin: " + message, Toast.LENGTH_SHORT).show();
                 Log.i("OurMusicPlugin", message);
+		successCallback(callback, PLAYER_INITIALIZED_CODE);
             }
             @Override
             public void onError(Throwable throwable) {
