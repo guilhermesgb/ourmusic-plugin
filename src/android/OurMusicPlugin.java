@@ -216,7 +216,7 @@ public class OurMusicPlugin extends CordovaPlugin
                             OurMusicPlugin.this.playerState = state;
                             OurMusicPlugin.this.successCallback(
                                     OurMusicPlugin.this.playPauseCallback,
-                                    OurMusicPlugin.this.playerStateToJsonObject(state),"PLAY_PRESSED");
+                                    OurMusicPlugin.this.playerStateToJsonObject(state, "PLAY_PRESSED"));
                         }
                     });
                 } catch (Exception e) {
@@ -261,7 +261,7 @@ public class OurMusicPlugin extends CordovaPlugin
                             OurMusicPlugin.this.playerState = state;
                             OurMusicPlugin.this.successCallback(
                                     OurMusicPlugin.this.playPauseCallback,
-                                    OurMusicPlugin.this.playerStateToJsonObject(state),"PAUSE_PRESSED");
+                                    OurMusicPlugin.this.playerStateToJsonObject(state,"PAUSE_PRESSED"));
                         }
                     });
                 } catch (Exception e) {
