@@ -138,10 +138,8 @@ public class OurMusicPlugin extends CordovaPlugin
     }
 
     private void initializePlayerIfNeeded(String token, final CallbackContext callback) {
-        if (player != null) {
-	    successCallback(loginCallback, PLAYER_INITIALIZED_CODE);
-	    return;
-	}
+        if (player != null) return;
+
         final Context context = cordova.getActivity().getApplicationContext();
         Config playerConfig = new Config(context, token, CLIENT_ID);
         player = Spotify.getPlayer(playerConfig, this, new Player.InitializationObserver() {
