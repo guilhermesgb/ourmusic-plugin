@@ -7,6 +7,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.spotify.sdk.android.authentication.AuthenticationClient;
+import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
 import com.spotify.sdk.android.player.PlayerStateCallback;
 import com.spotify.sdk.android.player.Config;
@@ -34,7 +35,7 @@ public class OurMusicPlugin extends CordovaPlugin
 
     protected static final int REQUEST_CODE_LOGIN_DELEGATE = 19204192;
     protected static final int REQUEST_CODE_LOGIN_LAUNCH = 20315203;
-    protected static final String CLIENT_ID = "1ad1195a59f646e3a38b656332897055";
+    protected static final String CLIENT_ID = "a86d7ad4269d4a6ea18b167c1f5b811d";
     protected static final String REDIRECT_URI = "ourmusic://spotify-callback/";
     protected static final int CALLBACK_INTERVAL = 1000;
     protected static final String PLAYER_INITIALIZED_CODE = "PLAYER_INITIALIZED";
@@ -46,7 +47,7 @@ public class OurMusicPlugin extends CordovaPlugin
 
     // Plugin functions:
     // 1 - login
-    //   Opens a new LoginActivity and waits for an auth_token in the result.
+    //   Opens a web browser and returns a spotify code (first step in authentication flow).
     //   * receives no args
     //   * runs a success callback with the authentication token as plain text
     // 2 - play
@@ -77,45 +78,42 @@ public class OurMusicPlugin extends CordovaPlugin
         cordova.getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Context context = cordova.getActivity().getApplicationContext();
-                String message = "Will prompt Login to Spotify!";
+                OurMusicPlugin.this.loginCallback = callback;
+
+		String message = "Will prompt Login to Spotify!";
                 Toast.makeText(context, "OurMusicPlugin: " + message, Toast.LENGTH_LONG).show();
                 Log.i("OurMusicPlugin", message);
-                OurMusicPlugin.this.loginCallback = callback;
-                Intent intent = new Intent(context, LoginActivity.class);
-                cordova.startActivityForResult(OurMusicPlugin.this,
-                    intent, REQUEST_CODE_LOGIN_DELEGATE);
+
+		AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(OurMusicPlugin.CLIENT_ID,
+							       AuthenticationResponse.Type.CODE, OurMusicPlugin.REDIRECT_URI);
+		builder.setScopes(new String[]{"user-read-private", "streaming"});
+		AuthenticationRequest request = builder.build();
+		
+		AuthenticationClient.openLoginInBrowser(this, request);
             }
         });
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        switch (requestCode) {
-            case REQUEST_CODE_LOGIN_DELEGATE:
-                if (resultCode == Activity.RESULT_OK) {
-                    final AuthenticationResponse response =
-                            (AuthenticationResponse) intent.getParcelableExtra("response");
-                    if (response.getType() == AuthenticationResponse.Type.TOKEN) {
-                        final Context context = cordova.getActivity().getApplicationContext();
-                        String message = "Logged in to Spotify successfully!";
-                        Toast.makeText(context, "OurMusicPlugin: " + message,
-                          Toast.LENGTH_LONG).show();
-                        Log.i("OurMusicPlugin", message);
-                        initializePlayerIfNeeded(response.getAccessToken(), loginCallback);
-                        successCallback(loginCallback, response.getAccessToken());
-                        return;
-                    }
-                } else {
-                    String error = "Could not login to Spotify (bad response from LoginActivity)!";
-                    Log.d("OurMusicPlugin", error);
-                }
-                break;
-            default:
-                String error = "Could not login to Spotify (bad response from somewhere)!";
-                Log.d("OurMusicPlugin", error);
-                break;
-        }
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
+        Uri uri = intent.getData();
+        if (uri != null) {
+            AuthenticationResponse response = AuthenticationResponse.fromUri(uri);
+	    if (response.getType() == AuthenticationResponse.Type.CODE) {
+		final Context context = cordova.getActivity().getApplicationContext();
+		String message = "Logged in to Spotify successfully!";
+		Toast.makeText(context, "OurMusicPlugin: " + message,
+			       Toast.LENGTH_LONG).show();
+		Log.i("OurMusicPlugin", message);
+		successCallback(loginCallback, response.getCode() );
+		return;
+	    }
+	}
+	String error = "Could not get Spotify code";
+	Log.d("OurMusicPlugin", error);
+	errorCallback(loginCallback, error);
     }
 
     @Override
