@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
+import android.net.Uri;
 
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
@@ -79,7 +80,8 @@ public class OurMusicPlugin extends CordovaPlugin
             @Override
             public void run() {
                 OurMusicPlugin.this.loginCallback = callback;
-
+		
+		Context context = cordova.getActivity().getApplicationContext();
 		String message = "Will prompt Login to Spotify!";
                 Toast.makeText(context, "OurMusicPlugin: " + message, Toast.LENGTH_LONG).show();
                 Log.i("OurMusicPlugin", message);
@@ -89,13 +91,13 @@ public class OurMusicPlugin extends CordovaPlugin
 		builder.setScopes(new String[]{"user-read-private", "streaming"});
 		AuthenticationRequest request = builder.build();
 		
-		AuthenticationClient.openLoginInBrowser(this, request);
+		AuthenticationClient.openLoginInBrowser(cordova.getActivity(), request);
             }
         });
     }
 
     @Override
-    protected void onNewIntent(Intent intent) {
+    public void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
 
         Uri uri = intent.getData();
