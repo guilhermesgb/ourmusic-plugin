@@ -89,6 +89,7 @@ public class OurMusicPlugin extends CordovaPlugin
 		AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(OurMusicPlugin.CLIENT_ID,
 							       AuthenticationResponse.Type.CODE, OurMusicPlugin.REDIRECT_URI);
 		builder.setScopes(new String[]{"user-read-private", "streaming"});
+		builder.setShowDialog(true);
 		AuthenticationRequest request = builder.build();
 		
 		AuthenticationClient.openLoginInBrowser(cordova.getActivity(), request);
@@ -99,12 +100,12 @@ public class OurMusicPlugin extends CordovaPlugin
     @Override
     public void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+	final Context context = cordova.getActivity().getApplicationContext();
 
         Uri uri = intent.getData();
         if (uri != null) {
             AuthenticationResponse response = AuthenticationResponse.fromUri(uri);
 	    if (response.getType() == AuthenticationResponse.Type.CODE) {
-		final Context context = cordova.getActivity().getApplicationContext();
 		String message = "Logged in to Spotify successfully!";
 		Toast.makeText(context, "OurMusicPlugin: " + message,
 			       Toast.LENGTH_LONG).show();
@@ -115,6 +116,8 @@ public class OurMusicPlugin extends CordovaPlugin
 	}
 	String error = "Could not get Spotify code";
 	Log.d("OurMusicPlugin", error);
+	Toast.makeText(context, "OurMusicPlugin: " + error,
+			       Toast.LENGTH_LONG).show();
 	errorCallback(loginCallback, error);
     }
 
