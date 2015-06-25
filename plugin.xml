@@ -5,7 +5,7 @@
   version="0.0.1">
     <name>OurMusicPlugin</name>
     <description>OurMusic Cordova plugin to provide native access to Spotify Android SDK</description>
-    <author>Guilherme Xibaca, Danilo Pimentxenha and Uian Sol</author>
+    <author>Guilherme Xibaca, Danilo Pimentxenha</author>
     <license>Apache 2.0</license>
     <keywords>ourmusic,cordova,plugin</keywords>
     <repo>https://github.com/guilhermesgb/ourmusic-plugin.git</repo>
@@ -31,16 +31,18 @@
           android:targetSdkVersion="21" />
         <application android:allowBackup="true" />
       </config-file>
+      <config-file target="AndroidManifest.xml" parent="/manifest/application/activity">
+	<intent-filter>
+          <action android:name="android.intent.action.VIEW"/>
+          <category android:name="android.intent.category.DEFAULT"/>
+          <category android:name="android.intent.category.BROWSABLE"/>
+          <data
+	      android:host="spotify-callback"
+	      android:scheme="ourmusic"/>
+	</intent-filter>
+      </config-file>
       <config-file target="AndroidManifest.xml" parent="/manifest/application">
         <activity android:name="com.ourmusic.plugin.LoginActivity" android:label="@string/app_name" android:launchMode="singleTop">
-	  <intent-filter>
-            <action android:name="android.intent.action.VIEW"/>
-            <category android:name="android.intent.category.DEFAULT"/>
-            <category android:name="android.intent.category.BROWSABLE"/>
-            <data
-		android:host="spotify-callback"
-		android:scheme="ourmusic"/>
-	  </intent-filter>
         </activity>
         <activity android:name="com.spotify.sdk.android.authentication.LoginActivity" android:theme="@android:style/Theme.Translucent.NoTitleBar">
         </activity>
