@@ -35,6 +35,10 @@ import java.lang.Override;
 public class OurMusicPlugin extends CordovaPlugin
         implements ConnectionStateCallback, PlayerNotificationCallback {
 
+    interface PlayerInitializedCallback {
+        public void playerInitializedSuccessfully();
+    }
+
     protected static final int REQUEST_CODE_LOGIN_DELEGATE = 19204192;
     protected static final int REQUEST_CODE_LOGIN_LAUNCH = 20315203;
     protected static final String CLIENT_ID = "a86d7ad4269d4a6ea18b167c1f5b811d";
@@ -45,6 +49,7 @@ public class OurMusicPlugin extends CordovaPlugin
     private Player player;
     private CallbackContext loginCallback;
     private CallbackContext playPauseCallback;
+    private PlayerInitializedCallback playerInitializedCallback;
     private PlayerState playerState;
 
     // Plugin functions:
@@ -122,8 +127,9 @@ public class OurMusicPlugin extends CordovaPlugin
     }
 
     @Override
-    public void onLoggedIn() {
+    public synchronized void onLoggedIn() {
         Log.d("OurMusicPlugin", "Player logged in");
+        this.playerInitializedCallback.playerInitializedSuccessfully();
     }
 
     @Override
@@ -140,15 +146,12 @@ public class OurMusicPlugin extends CordovaPlugin
         errorCallback(playPauseCallback, throwable.getMessage());
     }
 
-    interface PlayerInitializedCallback {
-        public void playerInitializedSuccessfully();
-    }
-
     private void initializePlayerIfNeeded(String token, final CallbackContext callbackContext,
             final PlayerInitializedCallback playerInitializedCallback) {
+        this.playerInitializedCallback = playerInitializedCallback;
         Log.i("OurMusicPlugin", "THE TOKEN RECEIVED IS: " + token);
         if (player != null) {
-            playerInitializedCallback.playerInitializedSuccessfully();
+            this.playerInitializedCallback.playerInitializedSuccessfully();
             return;
         }
 
@@ -162,7 +165,6 @@ public class OurMusicPlugin extends CordovaPlugin
                 String message = "Player initialized!";
                 Toast.makeText(context, "OurMusicPlugin: " + message, Toast.LENGTH_SHORT).show();
                 Log.i("OurMusicPlugin", message);
-                playerInitializedCallback.playerInitializedSuccessfully();
             }
             @Override
             public void onError(Throwable throwable) {
