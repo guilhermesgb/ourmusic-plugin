@@ -146,7 +146,10 @@ public class OurMusicPlugin extends CordovaPlugin
 
     private void initializePlayerIfNeeded(String token, final CallbackContext callbackContext,
             final PlayerInitializedCallback playerInitializedCallback) {
-        if (player != null) return;
+        if (player != null) {
+            playerInitializedCallback.playerInitializedSuccessfully();
+            return;
+        }
 
         final Context context = cordova.getActivity().getApplicationContext();
         Config playerConfig = new Config(context, token, CLIENT_ID);
