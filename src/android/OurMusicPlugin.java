@@ -177,7 +177,7 @@ public class OurMusicPlugin extends CordovaPlugin
     private void playSong(final JSONArray args, final CallbackContext callback) {
         this.playPauseCallback = callback;
         try {
-            initializePlayerIfNeeded(args.getString(2), playPauseCallback, new PlayerCallback(){
+            initializePlayerIfNeeded(args.getString(2), playPauseCallback, new PlayerInitializedCallback(){
                 public void playerInitializedSuccessfully() {
                     Context context = cordova.getActivity().getApplicationContext();
                     try {
