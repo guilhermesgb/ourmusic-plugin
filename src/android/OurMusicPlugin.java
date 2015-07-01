@@ -140,6 +140,8 @@ public class OurMusicPlugin extends CordovaPlugin
     @Override
     public void onLoginFailed(Throwable throwable) {
         Context context = cordova.getActivity().getApplicationContext();
+        Spotify.destroyPlayer(this);
+        player = null;
         String error = "Could not login to Spotify Player!";
         Toast.makeText(context, "OurMusicPlugin: " + error, Toast.LENGTH_LONG).show();
         Log.e("OurMusicPlugin", error);
