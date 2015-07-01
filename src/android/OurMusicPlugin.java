@@ -123,21 +123,21 @@ public class OurMusicPlugin extends CordovaPlugin
 
     @Override
     public void onLoggedIn() {
-        Log.d("OurMusicPlugin", "User logged in");
+        Log.d("OurMusicPlugin", "Player logged in");
     }
 
     @Override
     public void onLoggedOut() {
-        Log.d("OurMusicPlugin", "User logged out");
+        Log.d("OurMusicPlugin", "Player logged out");
     }
 
     @Override
     public void onLoginFailed(Throwable throwable) {
         Context context = cordova.getActivity().getApplicationContext();
-        String error = "Could not login to Spotify!";
+        String error = "Could not login to Spotify Player!";
         Toast.makeText(context, "OurMusicPlugin: " + error, Toast.LENGTH_LONG).show();
         Log.e("OurMusicPlugin", error);
-        errorCallback(loginCallback, throwable.getMessage());
+        errorCallback(playPauseCallback, throwable.getMessage());
     }
 
     interface PlayerInitializedCallback {
@@ -146,6 +146,7 @@ public class OurMusicPlugin extends CordovaPlugin
 
     private void initializePlayerIfNeeded(String token, final CallbackContext callbackContext,
             final PlayerInitializedCallback playerInitializedCallback) {
+        Log.i("OurMusicPlugin", "THE TOKEN RECEIVED IS: " + token);
         if (player != null) {
             playerInitializedCallback.playerInitializedSuccessfully();
             return;
