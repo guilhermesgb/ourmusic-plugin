@@ -152,7 +152,7 @@ public class OurMusicPlugin extends CordovaPlugin
     }
 
     private void initializePlayerIfNeeded(String token, final CallbackContext callbackContext,
-            final PlayerInitializedCallback playerInitializedCallback, int retries) {
+            final PlayerInitializedCallback playerInitializedCallback, final int retries) {
         this.playerInitializedCallback = playerInitializedCallback;
         Log.i("OurMusicPlugin", "THE TOKEN RECEIVED IS: " + token);
         if (player != null) {
@@ -176,7 +176,7 @@ public class OurMusicPlugin extends CordovaPlugin
                 Log.e("OurMusicPlugin", error + "; " + throwable.getMessage());
                 if (retries < 3) {
                     Log.e("OurMusicPlugin", "Retrying again...");
-                    initializePlayerIfNeeded(token, callbackContext, playerInitializedCallback, retries++);
+                    initializePlayerIfNeeded(token, callbackContext, playerInitializedCallback, retries + 1);
                 }
                 else {
                     Log.e("OurMusicPlugin", "Failed 3 times, sending error back.");
