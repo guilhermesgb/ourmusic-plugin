@@ -151,7 +151,7 @@ public class OurMusicPlugin extends CordovaPlugin
         errorCallback(playPauseCallback, PLAYER_ERROR_TOKEN_UNAUTHORIZED);
     }
 
-    private void initializePlayerIfNeeded(String token, final CallbackContext callbackContext,
+    private void initializePlayerIfNeeded(final String token, final CallbackContext callbackContext,
             final PlayerInitializedCallback playerInitializedCallback, final int retries) {
         this.playerInitializedCallback = playerInitializedCallback;
         Log.i("OurMusicPlugin", "THE TOKEN RECEIVED IS: " + token);
