@@ -119,10 +119,10 @@ public class OurMusicPlugin extends CordovaPlugin
                 successCallback(loginCallback, response.getCode());
                 return;
             }
-        }
-        String error = "Could not get Spotify code";
-        Log.d("OurMusicPlugin", error);
-        errorCallback(loginCallback, error);
+	    String error = "Could not get Spotify code";
+	    Log.d("OurMusicPlugin", error);
+	    errorCallback(loginCallback, error);
+        }        
     }
 
     @Override
