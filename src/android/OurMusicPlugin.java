@@ -31,6 +31,8 @@ import java.lang.Exception;
 import java.lang.Math;
 import java.lang.Override;
 
+import javax.lang.model.type.ErrorType;
+
 
 public class OurMusicPlugin extends CordovaPlugin
         implements ConnectionStateCallback, PlayerNotificationCallback {
@@ -39,12 +41,15 @@ public class OurMusicPlugin extends CordovaPlugin
         public void playerInitializedSuccessfully();
     }
 
+    enum PlayerErrorType {
+        TOKEN_UNAUTHORIZED, TRACK_UNAVAILABLE, UNKNOWN;
+    }
+
     protected static final int REQUEST_CODE_LOGIN_DELEGATE = 19204192;
     protected static final int REQUEST_CODE_LOGIN_LAUNCH = 20315203;
     protected static final String CLIENT_ID = "a86d7ad4269d4a6ea18b167c1f5b811d";
     protected static final String REDIRECT_URI = "ourmusic://spotify-callback/";
     protected static final int CALLBACK_INTERVAL = 1000;
-    protected static final String PLAYER_INITIALIZED_CODE = "PLAYER_INITIALIZED";
 
     private Player player;
     private CallbackContext loginCallback;
@@ -59,8 +64,10 @@ public class OurMusicPlugin extends CordovaPlugin
     //   * runs a success callback with the authentication token as plain text
     // 2 - play
     //   * args: trackUri, positionInMs and auth_token respectively
-    //   * when playing, constantly runs a success callback passing the current player state as argument
-    //   * when a event happens in the player, runs a success callback passing the current player state and the event type as argument
+    //   * when playing, constantly runs a success callback passing the current player state
+    //     as argument
+    //   * when a event happens in the player, runs a success callback passing the current player
+    //     state and the event type as argument
     // 3 - stop
     //   * receives no args
     @Override
@@ -89,7 +96,6 @@ public class OurMusicPlugin extends CordovaPlugin
 
                 Context context = cordova.getActivity().getApplicationContext();
                 String message = "Will prompt Login to Spotify!";
-                Toast.makeText(context, "OurMusicPlugin: " + message, Toast.LENGTH_LONG).show();
                 Log.i("OurMusicPlugin", message);
 
                 AuthenticationRequest.Builder builder =
@@ -114,7 +120,6 @@ public class OurMusicPlugin extends CordovaPlugin
             AuthenticationResponse response = AuthenticationResponse.fromUri(uri);
             if (response.getType() == AuthenticationResponse.Type.CODE) {
                 String message = "Logged in to Spotify successfully!";
-                Toast.makeText(context, "OurMusicPlugin: " + message, Toast.LENGTH_LONG).show();
                 Log.i("OurMusicPlugin", message);
                 successCallback(loginCallback, response.getCode());
                 return;
@@ -122,7 +127,6 @@ public class OurMusicPlugin extends CordovaPlugin
         }
         String error = "Could not get Spotify code";
         Log.d("OurMusicPlugin", error);
-        Toast.makeText(context, "OurMusicPlugin: " + error, Toast.LENGTH_LONG).show();
         errorCallback(loginCallback, error);
     }
 
@@ -143,13 +147,12 @@ public class OurMusicPlugin extends CordovaPlugin
         Spotify.destroyPlayer(this);
         player = null;
         String error = "Could not login to Spotify Player!";
-        Toast.makeText(context, "OurMusicPlugin: " + error, Toast.LENGTH_LONG).show();
-        Log.e("OurMusicPlugin", error);
-        errorCallback(playPauseCallback, throwable.getMessage());
+        Log.e("OurMusicPlugin", error + "; " + throwable.getMessage());
+        errorCallback(playPauseCallback, PlayerErrorType.TOKEN_UNAUTHORIZED);
     }
 
     private void initializePlayerIfNeeded(String token, final CallbackContext callbackContext,
-            final PlayerInitializedCallback playerInitializedCallback) {
+            final PlayerInitializedCallback playerInitializedCallback, int retries) {
         this.playerInitializedCallback = playerInitializedCallback;
         Log.i("OurMusicPlugin", "THE TOKEN RECEIVED IS: " + token);
         if (player != null) {
@@ -165,15 +168,20 @@ public class OurMusicPlugin extends CordovaPlugin
                 player.addConnectionStateCallback(OurMusicPlugin.this);
                 player.addPlayerNotificationCallback(OurMusicPlugin.this);
                 String message = "Player initialized!";
-                Toast.makeText(context, "OurMusicPlugin: " + message, Toast.LENGTH_SHORT).show();
                 Log.i("OurMusicPlugin", message);
             }
             @Override
             public void onError(Throwable throwable) {
                 String error = "Player could not initialize properly!";
-                Toast.makeText(context, "OurMusicPlugin: " + error, Toast.LENGTH_LONG).show();
-                Log.e("OurMusicPlugin", error);
-                errorCallback(callbackContext, throwable.getMessage());
+                Log.e("OurMusicPlugin", error + "; " + throwable.getMessage());
+                if (retries < 3) {
+                    Log.e("OurMusicPlugin", "Retrying again...");
+                    initializePlayerIfNeeded(token, callbackContext, playerInitializedCallback, retries++);
+                }
+                else {
+                    Log.e("OurMusicPlugin", "Failed 3 times, sending error back.");
+                    errorCallback(callbackContext, PlayerErrorType.UNKNOWN);
+                }
             }
         });
     }
@@ -192,7 +200,6 @@ public class OurMusicPlugin extends CordovaPlugin
                                 && !playerState.playing) {
                             player.resume();
                             String message = "Commanded Player to resume a song!";
-                            Toast.makeText(context, "OurMusicPlugin: " + message, Toast.LENGTH_LONG).show();
                             Log.i("OurMusicPlugin", message);
                         } else {
                             PlayConfig config = PlayConfig.createFor(trackUri);
@@ -200,40 +207,29 @@ public class OurMusicPlugin extends CordovaPlugin
                             player.play(config);
                             String message = "Commanded Player to play a song (seeking to pos " +
                                     positionInMs + ")!";
-                            Toast.makeText(context, "OurMusicPlugin: " + message, Toast.LENGTH_LONG).show();
                             Log.i("OurMusicPlugin", message);
                         }
-                        try {
-                            player.getPlayerState(new PlayerStateCallback() {
-                                @Override
-                                public void onPlayerState(PlayerState state) {
-                                    OurMusicPlugin.this.playerState = state;
-                                    OurMusicPlugin.this.successCallback(
-                                            OurMusicPlugin.this.playPauseCallback,
-                                            OurMusicPlugin.this.playerStateToJsonObject(state, "PLAY_PRESSED"));
-                                }
-                            });
-                        } catch (Exception e) {
-                            String error = "Error retriving playback state!";
-                            Toast.makeText(context, "OurMusicPlugin: " + error, Toast.LENGTH_LONG).show();
-                            Log.e("OurMusicPlugin", error);
-                            errorCallback(playPauseCallback, e.getMessage());
-                            Log.d("OurMusicPlugin", "Error retriving playback state; " + e.getMessage());
-                        }
+                        player.getPlayerState(new PlayerStateCallback() {
+                            @Override
+                            public void onPlayerState(PlayerState state) {
+                                OurMusicPlugin.this.playerState = state;
+                                OurMusicPlugin.this.successCallback(
+                                        OurMusicPlugin.this.playPauseCallback,
+                                        OurMusicPlugin.this.playerStateToJsonObject(state, "PLAY_PRESSED"));
+                            }
+                        });
                     } catch (Exception e) {
                         String error = "Player could not execute command properly!";
-                        Toast.makeText(context, "OurMusicPlugin: " + error, Toast.LENGTH_LONG).show();
-                        Log.e("OurMusicPlugin", error);
-                        errorCallback(playPauseCallback, e.getMessage());
+                        Log.e("OurMusicPlugin", error + "; " + e.getMessage());
+                        Spotify.destroyPlayer(OurMusicPlugin.this);
+                        player = null;
                     }
                 }
-            });
+            }, 0);
         } catch(Exception e){
             Context context = cordova.getActivity().getApplicationContext();
             String error = "Could not initialize Player due to problems with the arguments";
-            Toast.makeText(context, "OurMusicPlugin: " + error, Toast.LENGTH_LONG).show();
-            Log.e("OurMusicPlugin", error);
-            errorCallback(playPauseCallback, e.getMessage());
+            Log.e("OurMusicPlugin", error + "; " + e.getMessage());
         }
     }
 
@@ -246,39 +242,28 @@ public class OurMusicPlugin extends CordovaPlugin
                     try {
                         player.pause();
                         String message = "Commanded Player to pause a song!";
-                        Toast.makeText(context, "OurMusicPlugin: " + message, Toast.LENGTH_LONG).show();
                         Log.i("OurMusicPlugin", message);
-                        try {
-                            player.getPlayerState(new PlayerStateCallback() {
-                                @Override
-                                public void onPlayerState(PlayerState state) {
-                                    OurMusicPlugin.this.playerState = state;
-                                    OurMusicPlugin.this.successCallback(
-                                            OurMusicPlugin.this.playPauseCallback,
-                                            OurMusicPlugin.this.playerStateToJsonObject(state,"PAUSE_PRESSED"));
-                                }
-                            });
-                        } catch (Exception e) {
-                            String error = "Error retriving playback state!";
-                            Toast.makeText(context, "OurMusicPlugin: " + error, Toast.LENGTH_LONG).show();
-                            Log.e("OurMusicPlugin", error);
-                            errorCallback(playPauseCallback, e.getMessage());
-                            Log.d("OurMusicPlugin", "Error retriving playback state; " + e.getMessage());
-                        }
+                        player.getPlayerState(new PlayerStateCallback() {
+                            @Override
+                            public void onPlayerState(PlayerState state) {
+                                OurMusicPlugin.this.playerState = state;
+                                OurMusicPlugin.this.successCallback(
+                                        OurMusicPlugin.this.playPauseCallback,
+                                        OurMusicPlugin.this.playerStateToJsonObject(state,"PAUSE_PRESSED"));
+                            }
+                        });
                     } catch (Exception e) {
                         String error = "Player could not execute command properly!";
-                        Toast.makeText(context, "OurMusicPlugin: " + error, Toast.LENGTH_LONG).show();
-                        Log.e("OurMusicPlugin", error);
-                        errorCallback(playPauseCallback, e.getMessage());
+                        Log.e("OurMusicPlugin", error + "; " + e.getMessage());
+                        Spotify.destroyPlayer(OurMusicPlugin.this);
+                        player = null;
                     }
                 }
-            });
+            }, 0);
         } catch(Exception e){
             Context context = cordova.getActivity().getApplicationContext();
             String error = "Could not initialize Player due to problems with the arguments";
-            Toast.makeText(context, "OurMusicPlugin: " + error, Toast.LENGTH_LONG).show();
             Log.e("OurMusicPlugin", error);
-            errorCallback(playPauseCallback, e.getMessage());
         }
     }
 
@@ -309,9 +294,12 @@ public class OurMusicPlugin extends CordovaPlugin
     public void onPlaybackError(ErrorType errorType, String message) {
         Context context = cordova.getActivity().getApplicationContext();
         String error = "Playback error received: " + errorType.name() + "; " + message;
-        Toast.makeText(context, "OurMusicPlugin: " + error, Toast.LENGTH_LONG).show();
         Log.e("OurMusicPlugin", error);
-        errorCallback(playPauseCallback, errorType.toString());
+        if (errorType == ErrorType.TRACK_UNAVAILABLE) {
+            errorCallback(playPauseCallback, PlayerErrorType.TRACK_UNAVAILABLE);
+            return;
+        }
+        errorCallback(playPauseCallback, PlayerErrorType.UNKNOWN);
     }
 
     private void runPlayerStateUpdater() {
@@ -324,14 +312,15 @@ public class OurMusicPlugin extends CordovaPlugin
                         OurMusicPlugin.this.player.getPlayerState(new PlayerStateCallback() {
                             @Override
                             public void onPlayerState(PlayerState state) {
-				synchronized(OurMusicPlugin.this){
-				    if(OurMusicPlugin.this.playerState != null && OurMusicPlugin.this.playerState.playing){
-					OurMusicPlugin.this.playerState = state;
-					OurMusicPlugin.this.successCallback(
-									    OurMusicPlugin.this.playPauseCallback,
-									    OurMusicPlugin.this.playerStateToJsonObject(state,"PLAYING"));
-				    }
-				}
+                                synchronized(OurMusicPlugin.this){
+                                    if(OurMusicPlugin.this.playerState != null
+                                            && OurMusicPlugin.this.playerState.playing){
+                                        OurMusicPlugin.this.playerState = state;
+                                        OurMusicPlugin.this.successCallback(
+                                                OurMusicPlugin.this.playPauseCallback,
+                                                OurMusicPlugin.this.playerStateToJsonObject(state,"PLAYING"));
+                                    }
+                                }
                             }
                         });
                         Thread.sleep(CALLBACK_INTERVAL);
