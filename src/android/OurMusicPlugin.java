@@ -41,15 +41,15 @@ public class OurMusicPlugin extends CordovaPlugin
         public void playerInitializedSuccessfully();
     }
 
-    enum PlayerErrorType {
-        TOKEN_UNAUTHORIZED, TRACK_UNAVAILABLE, UNKNOWN;
-    }
-
     protected static final int REQUEST_CODE_LOGIN_DELEGATE = 19204192;
     protected static final int REQUEST_CODE_LOGIN_LAUNCH = 20315203;
     protected static final String CLIENT_ID = "a86d7ad4269d4a6ea18b167c1f5b811d";
     protected static final String REDIRECT_URI = "ourmusic://spotify-callback/";
     protected static final int CALLBACK_INTERVAL = 1000;
+
+    private static final String PLAYER_ERROR_TOKEN_UNAUTHORIZED = "TOKEN_UNAUTHORIZED";
+    private static final String PLAYER_ERROR_TRACK_UNAVAILABLE = "TRACK_UNAVAILABLE";
+    private static final String PLAYER_ERROR_UNKNOWN = "UNKNOWN";
 
     private Player player;
     private CallbackContext loginCallback;
@@ -148,7 +148,7 @@ public class OurMusicPlugin extends CordovaPlugin
         player = null;
         String error = "Could not login to Spotify Player!";
         Log.e("OurMusicPlugin", error + "; " + throwable.getMessage());
-        errorCallback(playPauseCallback, PlayerErrorType.TOKEN_UNAUTHORIZED);
+        errorCallback(playPauseCallback, PLAYER_ERROR_TOKEN_UNAUTHORIZED);
     }
 
     private void initializePlayerIfNeeded(String token, final CallbackContext callbackContext,
@@ -180,7 +180,7 @@ public class OurMusicPlugin extends CordovaPlugin
                 }
                 else {
                     Log.e("OurMusicPlugin", "Failed 3 times, sending error back.");
-                    errorCallback(callbackContext, PlayerErrorType.UNKNOWN);
+                    errorCallback(callbackContext, PLAYER_ERROR_UNKNOWN);
                 }
             }
         });
@@ -296,10 +296,10 @@ public class OurMusicPlugin extends CordovaPlugin
         String error = "Playback error received: " + errorType.name() + "; " + message;
         Log.e("OurMusicPlugin", error);
         if (errorType == ErrorType.TRACK_UNAVAILABLE) {
-            errorCallback(playPauseCallback, PlayerErrorType.TRACK_UNAVAILABLE);
+            errorCallback(playPauseCallback, PLAYER_ERROR_TRACK_UNAVAILABLE);
             return;
         }
-        errorCallback(playPauseCallback, PlayerErrorType.UNKNOWN);
+        errorCallback(playPauseCallback, PLAYER_ERROR_UNKNOWN);
     }
 
     private void runPlayerStateUpdater() {
