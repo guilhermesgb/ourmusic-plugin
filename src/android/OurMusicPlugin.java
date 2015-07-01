@@ -161,7 +161,6 @@ public class OurMusicPlugin extends CordovaPlugin
                 String message = "Player initialized!";
                 Toast.makeText(context, "OurMusicPlugin: " + message, Toast.LENGTH_SHORT).show();
                 Log.i("OurMusicPlugin", message);
-                successCallback(loginCallback, PLAYER_INITIALIZED_CODE);
                 playerInitializedCallback.playerInitializedSuccessfully();
             }
             @Override
