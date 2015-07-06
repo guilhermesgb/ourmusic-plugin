@@ -96,7 +96,7 @@ public class OurMusicPlugin extends CordovaPlugin
                 AuthenticationRequest.Builder builder =
                         new AuthenticationRequest.Builder(OurMusicPlugin.CLIENT_ID,
                                 AuthenticationResponse.Type.CODE, OurMusicPlugin.REDIRECT_URI);
-                builder.setScopes(new String[]{"user-read-private", "streaming"});
+                builder.setScopes(new String[]{"user-read-private", "streaming"},"user-library-read");
                 builder.setShowDialog(true);
                 AuthenticationRequest request = builder.build();
 
